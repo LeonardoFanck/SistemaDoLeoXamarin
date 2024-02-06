@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:classe="clr-namespace:SistemaDoLeo.Classes"
+             xmlns:teste="clr-namespace:SistemaDoLeo"
+             xmlns:pagina="clr-namespace:SistemaDoLeo.Paginas"
+             Title="Sistema do Leo - Menu"
+             x:Class="SistemaDoLeo.Paginas.FlyoutMenu">
+    <StackLayout>
+        <ListView x:Name="lista" x:FieldModifier="public" ItemsSource="{Binding telas}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="33" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <Image Source="{Binding Icone}"/>
+                            <Label Grid.Column="1" Text="{Binding Titulo}" VerticalOptions="Center" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>

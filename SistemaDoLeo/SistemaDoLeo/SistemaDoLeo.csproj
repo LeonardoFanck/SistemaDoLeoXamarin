@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <ProduceReferenceAssemblyInOutDir>true</ProduceReferenceAssemblyInOutDir>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -60,7 +61,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DB\" />
     <Folder Include="Servicos\" />
   </ItemGroup>
+
+  <Import Project="..\..\..\SistemaDoLeo.Classes\SistemaDoLeo.Classes.projitems" Label="Shared" />
 </Project>

@@ -25,7 +25,14 @@
                                 </SwipeView.LeftItems>
                                 <StackLayout Padding="3">
                                     <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False" CornerRadius="6">
-                                        <Label Text="{Binding Nome}" TextColor="Black" VerticalOptions="Center" HorizontalOptions="Center" />
+                                        <Label TextColor="Black" FontAttributes="Bold" FontSize="Body" VerticalOptions="Center" HorizontalOptions="Center" >
+                                            <Label.Text>
+                                                <MultiBinding StringFormat="{}{0}   -   {1}">
+                                                    <Binding Path="Id" />
+                                                    <Binding Path="Nome" />
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
                                     </Frame>
                                 </StackLayout>
                             </SwipeView>

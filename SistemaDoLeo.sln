@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SistemaDoLeo", "SistemaDoLe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamarinAPI", "..\API\XamarinAPI\XamarinAPI.csproj", "{0AFAA8C3-6CFD-4A43-9648-8B403275E68E}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SistemaDoLeo.Modelos", "..\SistemaDoLeo.Classes\SistemaDoLeo.Modelos.shproj", "{C3CC6EC4-1CD2-4089-9D96-680A97E83312}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,5 +75,10 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23F69754-9F38-4AE6-AC7E-973EB05370CA}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\SistemaDoLeo.Classes\SistemaDoLeo.Classes.projitems*{0afaa8c3-6cfd-4a43-9648-8b403275e68e}*SharedItemsImports = 5
+		..\SistemaDoLeo.Classes\SistemaDoLeo.Classes.projitems*{a154bee6-2f67-4cc2-9ec6-03da48c9e76e}*SharedItemsImports = 5
+		..\SistemaDoLeo.Classes\SistemaDoLeo.Classes.projitems*{c3cc6ec4-1cd2-4089-9d96-680a97e83312}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

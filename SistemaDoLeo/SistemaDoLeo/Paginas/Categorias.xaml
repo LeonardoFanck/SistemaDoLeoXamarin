@@ -6,28 +6,33 @@
     <ContentPage Title="Listagem">
         <StackLayout>
             <SearchBar x:Name="SrcBuscar" Placeholder="Digite para buscar pelo nome..." 
-                   Margin="10" BackgroundColor="White" TextColor="Black" PlaceholderColor="Black"/>
+                        Margin="10" BackgroundColor="White" TextColor="Black" PlaceholderColor="Black"
+                        TextChanged="SrcBuscar_TextChanged"/>
 
-            <CollectionView x:Name="CvListagem"
-                        Margin="10" HorizontalOptions="CenterAndExpand" SelectionMode="Single"
-                        ItemsSource="{Binding Categoria}" SelectionChanged="CvListagem_SelectionChanged" >
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <SwipeView>
-                            <SwipeView.LeftItems>
-                                <SwipeItem x:Name="SwDeletar" Text="Deletar"
-                                           BackgroundColor="Red"
-                                           Invoked="SwDeletar_Invoked"/>
-                            </SwipeView.LeftItems>
-                            <StackLayout Padding="3">
-                                <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False" CornerRadius="6">
-                                    <Label Text="{Binding Nome}" TextColor="Black" VerticalOptions="Center" HorizontalOptions="Center" />
-                                </Frame>
-                            </StackLayout>
-                        </SwipeView>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <RefreshView x:Name="RefreshV"
+                         RefreshColor="Black"
+                         Refreshing="RefreshV_Refreshing">
+                <CollectionView x:Name="CvListagem"
+                            Margin="10" HorizontalOptions="CenterAndExpand" SelectionMode="Single"
+                            ItemsSource="{Binding Categoria}" SelectionChanged="CvListagem_SelectionChanged" >
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <SwipeView>
+                                <SwipeView.LeftItems>
+                                    <SwipeItem x:Name="SwDeletar" Text="Deletar"
+                                               BackgroundColor="Red"
+                                               Invoked="SwDeletar_Invoked"/>
+                                </SwipeView.LeftItems>
+                                <StackLayout Padding="3">
+                                    <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False" CornerRadius="6">
+                                        <Label Text="{Binding Nome}" TextColor="Black" VerticalOptions="Center" HorizontalOptions="Center" />
+                                    </Frame>
+                                </StackLayout>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
         </StackLayout>
     </ContentPage>
 

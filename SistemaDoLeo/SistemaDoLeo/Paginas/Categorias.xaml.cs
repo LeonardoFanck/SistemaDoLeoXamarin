@@ -1,7 +1,11 @@
-﻿using SistemaDoLeo.Classes;
+﻿using Newtonsoft.Json;
+using SistemaDoLeo.Classes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,39 +17,54 @@ namespace SistemaDoLeo.Paginas
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class Categorias : TabbedPage
 	{
+        private int Status;
         private int Visualizar = 0;
         private int Cadastro = 1;
         private int Editar = 2;
+        private List<Categoria> listaBase = new List<Categoria>();
 
+        private readonly HttpClient _cliente;
+        private const string url = "https://10.0.2.2:7097/api/categorias";
 
-		public Categorias ()
+        public HttpClientHandler GetInsecureHandler()
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            {
+                if (cert.Issuer.Equals("CN=localhost"))
+                    return true;
+                return errors == System.Net.Security.SslPolicyErrors.None;
+            };
+            return handler;
+        }
+
+        public Categorias ()
 		{
 			InitializeComponent();
 
 			BindingContext = this;
 
-			CurrentPage = Children[0];
+            CurrentPage = Children[0];
 
-			CarregaLista();
+            HttpClientHandler insecureHandler = GetInsecureHandler();
+            _cliente = new HttpClient(insecureHandler);
+
+            CarregaLista();
         }
 
-		private async void CarregaLista()
+        private async Task CarregaLista()
 		{
-			var lista = new List<Categoria>();
+            RefreshV.IsRefreshing = true;
 
-			for(int i = 0; i < 10; i++) {
-				lista.Add(new Categoria()
-				{
-                    Id = i,
-                    Nome = "Teste " + i,
-                    Inativo = false
-                });
-            }
+            string json = await _cliente.GetStringAsync(url);
+            List<Categoria> myList = JsonConvert.DeserializeObject<List<Categoria>>(json);
+            listaBase = myList;
+            CvListagem.ItemsSource = myList;
 
-			CvListagem.ItemsSource = lista;
-		}
+            RefreshV.IsRefreshing = false;
+        }
 
-        private async void CvListagem_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CvListagem_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 			CurrentPage = Children[1];
 
@@ -64,9 +83,39 @@ namespace SistemaDoLeo.Paginas
 			}
         }
 
-        private void SwDeletar_Invoked(object sender, EventArgs e)
+        private async void SwDeletar_Invoked(object sender, EventArgs e)
         {
+            var selecionado = (sender as SwipeItem)?.BindingContext as Categoria;
 
+            if(selecionado == null)
+            {
+                await DisplayAlert("Erro", "Nenhum item selecionado", "Ok");
+
+                return;
+            }
+
+            var confirmacao = await DisplayAlert("Confirmação", $"Deseja realmente fazer a exclusão do Registro {selecionado.Nome}?", "Confirmar", "Cancelar");
+
+            if (confirmacao)
+            {
+                var response = await _cliente.DeleteAsync($"{url}/{selecionado.Id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await DisplayAlert("AFF", "Deu erro", "Ok");
+
+                    return;
+                }
+
+                listaBase.Remove(selecionado);
+                CvListagem.ItemsSource = listaBase;
+
+                await DisplayAlert("Teste", $"Testes Ok, irá ser deletado o item id: {selecionado.Id}", "Ok");
+            }
+            else
+            {
+                return;
+            }
         }
 
         private void BtnNovo_Clicked(object sender, EventArgs e)
@@ -77,16 +126,73 @@ namespace SistemaDoLeo.Paginas
             // PEGA PROXIMO REGISTRO
         }
 
-        private void BtnEditar_Clicked(object sender, EventArgs e)
+        private async void BtnEditar_Clicked(object sender, EventArgs e)
         {
+            if(TxtCodigo.Text == "")
+            {
+                await DisplayAlert("Erro", "Necessário selecionar um item", "Ok");
+                return;
+            }
+
             validaStatus(Editar);
         }
 
         private async void BtnSalvar_Clicked(object sender, EventArgs e)
         {
-            if(await validaCampos())
+            if(await validaCampos() == false)
             {
-                await DisplayAlert("OK", "Tudo certo - Teste", "Ok");
+                await DisplayAlert("Erro", "Campo faltando", "Ok");
+
+                return;
+            }
+
+            Categoria categoria = new Categoria();
+
+            if(Status == Cadastro)
+            {
+                categoria = new Categoria
+                {
+                    Nome = TxtNome.Text,
+                    Inativo = ChkInativo.IsChecked
+                };
+
+            }
+            else if(Status == Editar)
+            {
+                categoria = new Categoria
+                {
+                    Id = Convert.ToInt32(TxtCodigo.Text),
+                    Nome = TxtNome.Text,
+                    Inativo = ChkInativo.IsChecked
+                };
+            }
+
+            await SalvarRegistro(categoria);
+        }
+
+        private async Task SalvarRegistro(Categoria categoria)
+        {
+            var json = JsonConvert.SerializeObject(categoria);
+            var conteudo = new StringContent(json, Encoding.UTF8, "application/json");
+
+
+            if(categoria.Id == 0)
+            {
+                var response = await _cliente.PostAsync(url, conteudo);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await DisplayAlert("AFF", "Deu erro o cadastro", "Ok");
+                }
+            }
+            else
+            {
+                var response = await _cliente.PutAsync($"{url}/{categoria.Id}", conteudo);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await DisplayAlert("AFF", "Deu erro a alteração", "Ok");
+                }
             }
         }
 
@@ -112,11 +218,24 @@ namespace SistemaDoLeo.Paginas
         {
             if(status == Visualizar)
             {
+                this.Status = Visualizar;
+
                 TxtNome.IsEnabled = false;
                 ChkInativo.IsEnabled = false;
             }
+            else if(status == Editar)
+            {
+                this.Status = Editar;
+
+                TxtCodigo.IsEnabled = true;
+                TxtNome.IsEnabled = true;
+                ChkInativo.IsEnabled = true;
+            }
             else
             {
+                this.Status = Cadastro;
+
+                TxtCodigo.IsEnabled = true;
                 TxtNome.IsEnabled = true;
                 ChkInativo.IsEnabled = true;
             }
@@ -127,6 +246,18 @@ namespace SistemaDoLeo.Paginas
             TxtCodigo.Text = string.Empty;
             TxtNome.Text = string.Empty;
             ChkInativo.IsChecked = false;
+        }
+
+        private void SrcBuscar_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var listaFiltro = listaBase.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList();
+
+            CvListagem.ItemsSource = listaFiltro;
+        }
+
+        private async void RefreshV_Refreshing(object sender, EventArgs e)
+        {
+            await CarregaLista();
         }
     }
 }

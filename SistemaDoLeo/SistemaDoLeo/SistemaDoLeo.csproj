@@ -60,9 +60,5 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Servicos\" />
-  </ItemGroup>
-
   <Import Project="..\..\..\SistemaDoLeo.Classes\SistemaDoLeo.Classes.projitems" Label="Shared" />
 </Project>

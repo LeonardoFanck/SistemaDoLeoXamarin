@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             NavigationPage.HasNavigationBar="false"
              x:Class="SistemaDoLeo.MainPage">
 
     <Grid>
@@ -22,27 +23,27 @@
                            FontSize="Body" 
                            TextColor="Black" 
                            HorizontalOptions="Start" />
-                        <Entry x:Name="txtEmail" 
-                           Keyboard="Email" 
-                           ReturnType="Next"
-                           ClearButtonVisibility="WhileEditing" />
+                        <Entry x:Name="TxtOperador" 
+                               Keyboard="Numeric" 
+                               ReturnType="Next"
+                               ClearButtonVisibility="WhileEditing" />
                         <Label Text="Senha" 
-                           FontSize="Body" 
-                           TextColor="Black" 
-                           HorizontalOptions="Start" />
-                        <Entry x:Name="txtSenha" 
-                           Keyboard="Default" 
-                           ReturnType="Done" 
-                           IsPassword="True"
-                           ClearButtonVisibility="WhileEditing" />
+                               FontSize="Body" 
+                               TextColor="Black" 
+                               HorizontalOptions="Start" />
+                        <Entry x:Name="TxtSenha" 
+                               Keyboard="Default" 
+                               ReturnType="Done"
+                               IsPassword="True"
+                               ClearButtonVisibility="WhileEditing" />
                     </StackLayout>
                 </Frame>
 
-                <Button x:Name="btnLogar" Text="Logar"
-                    BackgroundColor="Black" 
-                    TextColor="White" CornerRadius="20" 
-                    HorizontalOptions="Center" 
-                    Clicked="btnLogar_Clicked"/>
+                <Button x:Name="BtnLogar" Text="Logar"
+                        BackgroundColor="Black" 
+                        TextColor="White" CornerRadius="20" 
+                        HorizontalOptions="Center" 
+                        Clicked="btnLogar_Clicked"/>
             </StackLayout>
         </StackLayout>
 

@@ -10,6 +10,7 @@ using SistemaDoLeo.Modelos.Classes;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using SistemaDoLeo.Classes.Classes;
 
 namespace SistemaDoLeo.Paginas
 {
@@ -21,9 +22,11 @@ namespace SistemaDoLeo.Paginas
         private int Cadastro = 1;
         private int Editar = 2;
         private List<Categoria> listaBase = new List<Categoria>();
+        private ProximoRegistro proximoRegistro;
 
         private readonly HttpClient _cliente;
-        private const string url = "https://10.0.2.2:7097/api/categorias";
+        private string url = $"{Links.ip}/Categoria";
+        private string Titulo = "Categoria";
 
         public Categorias()
         {
@@ -76,12 +79,12 @@ namespace SistemaDoLeo.Paginas
 
             if (selecionado == null)
             {
-                await DisplayAlert("Erro", "Nenhum item selecionado", "Ok");
+                await DisplayAlert(Titulo, "Nenhum item selecionado", "Ok");
 
                 return;
             }
 
-            var confirmacao = await DisplayAlert("Confirmação", $"Deseja realmente fazer a exclusão do Registro {selecionado.Nome}?", "Confirmar", "Cancelar");
+            var confirmacao = await DisplayAlert(title:ToString(), $"Deseja realmente fazer a exclusão do Registro {selecionado.Nome}?", "Confirmar", "Cancelar");
 
             if (confirmacao)
             {
@@ -89,15 +92,26 @@ namespace SistemaDoLeo.Paginas
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    await DisplayAlert("AFF", "Deu erro", "Ok");
+                    await DisplayAlert(Titulo, "Ocorreu um erro", "Ok");
 
                     return;
                 }
 
                 listaBase.Remove(selecionado);
-                CvListagem.ItemsSource = listaBase.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList();
 
-                await DisplayAlert("Teste", $"Testes Ok, irá ser deletado o item id: {selecionado.Id}", "Ok");
+                // LIMPA OS CAMPOS DO CADASTRO PARA NÃO DEIXAR EDITAR O ITEM EXCLUIDO
+                limpaCampos();
+
+                if(SrcBuscar.Text == null)
+                {
+                    CvListagem.ItemsSource = new List<Categoria>(listaBase);
+                }
+                else
+                {
+                    CvListagem.ItemsSource = new List<Categoria>(listaBase.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList());
+                }
+
+                await DisplayAlert(Titulo, $"Deletado o item id: {selecionado.Id} - Atualizar para um Toast", "Ok");
             }
             else
             {
@@ -105,19 +119,34 @@ namespace SistemaDoLeo.Paginas
             }
         }
 
-        private void BtnNovo_Clicked(object sender, EventArgs e)
+        private async void BtnNovo_Clicked(object sender, EventArgs e)
         {
             limpaCampos();
             validaStatus(Cadastro);
 
             // PEGA PROXIMO REGISTRO
+            var id = await PegaProximoRegistro();
+
+            TxtCodigo.Text = id.ToString();
+        }
+
+        private async Task<int> PegaProximoRegistro()
+        {
+            var json = await _cliente.GetStringAsync(Links.proximoRegistro);
+
+            proximoRegistro = JsonConvert.DeserializeObject<ProximoRegistro>(json);
+
+            proximoRegistro.Categoria += 1;
+
+            return proximoRegistro.Categoria;
         }
 
         private async void BtnEditar_Clicked(object sender, EventArgs e)
         {
-            if (TxtCodigo.Text == "")
+            if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
             {
-                await DisplayAlert("Erro", "Necessário selecionar um item", "Ok");
+                await DisplayAlert(Titulo, "Necessário selecionar um item", "Ok");
+
                 return;
             }
 
@@ -128,7 +157,7 @@ namespace SistemaDoLeo.Paginas
         {
             if (await validaCampos() == false)
             {
-                await DisplayAlert("Erro", "Campo faltando", "Ok");
+                //await DisplayAlert(Titulo, "Campo faltando", "Ok");
 
                 return;
             }
@@ -165,19 +194,23 @@ namespace SistemaDoLeo.Paginas
             var json = JsonConvert.SerializeObject(categoria);
             var conteudo = new StringContent(json, Encoding.UTF8, "application/json");
 
-
             if (categoria.Id == 0)
             {
                 var response = await _cliente.PostAsync(url, conteudo);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    await DisplayAlert("AFF", "Deu erro o cadastro", "Ok");
+                    await DisplayAlert(Titulo, "Ocorreu um erro no Cadastro", "Ok");
 
                     return false;
                 }
 
-                listaBase.Add(categoria);
+                var novaCategoria = JsonConvert.DeserializeObject<Categoria>(await response.Content.ReadAsStringAsync());
+
+                await AtualizaProximoRegistro(novaCategoria.Id);
+
+                TxtCodigo.Text = novaCategoria.Id.ToString();
+                listaBase.Add(novaCategoria);
                 CvListagem.ItemsSource = new List<Categoria>(listaBase);
             }
             else
@@ -186,7 +219,7 @@ namespace SistemaDoLeo.Paginas
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    await DisplayAlert("AFF", "Deu erro a alteração", "Ok");
+                    await DisplayAlert(Titulo, "Ocorreu um erro ao fazer a Alteração", "Ok");
 
                     return false;
                 }
@@ -194,17 +227,27 @@ namespace SistemaDoLeo.Paginas
                 listaBase.Remove(listaBase.FirstOrDefault(l => l.Id == categoria.Id));
                 listaBase.Add(categoria);
                 CvListagem.ItemsSource = new List<Categoria>(listaBase).OrderBy(i => i.Id);
-
             }
 
             return true;
+        }
+
+        private async Task AtualizaProximoRegistro(int id)
+        {
+            // ATUALIZA O PROXIMO REGISTRO COM BASE NO RETORNO DO POST
+            proximoRegistro.Categoria = id;
+
+            var json = JsonConvert.SerializeObject(proximoRegistro);
+            var conteudo = new StringContent(json, Encoding.UTF8, "application/json");
+
+            await _cliente.PutAsync(Links.proximoRegistro, conteudo);
         }
 
         private async Task<bool> validaCampos()
         {
             if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
             {
-                // COLOCAR MENSAGEM DE NECESSARIO INFORMAR UM ID
+                // COLOCAR UM TOAST DE NECESSARIO INFORMAR UM ID
 
                 return false;
             }
@@ -227,6 +270,12 @@ namespace SistemaDoLeo.Paginas
                 TxtCodigo.IsEnabled = false;
                 TxtNome.IsEnabled = false;
                 ChkInativo.IsEnabled = false;
+
+                BtnNovo.Text = "Novo";
+
+                BtnEditar.IsEnabled = true;
+                BtnNovo.IsEnabled = true;
+                BtnSalvar.IsEnabled = false;
             }
             else if (status == Editar)
             {
@@ -235,14 +284,24 @@ namespace SistemaDoLeo.Paginas
                 TxtCodigo.IsEnabled = false;
                 TxtNome.IsEnabled = true;
                 ChkInativo.IsEnabled = true;
+
+                BtnEditar.IsEnabled = false;
+                BtnNovo.IsEnabled = false;
+                BtnSalvar.IsEnabled = true;
             }
             else
             {
                 this.Status = Cadastro;
 
-                TxtCodigo.IsEnabled = true;
+                TxtCodigo.IsEnabled = false;
                 TxtNome.IsEnabled = true;
                 ChkInativo.IsEnabled = true;
+
+                BtnNovo.Text = "Limpar";
+
+                BtnEditar.IsEnabled = false;
+                BtnNovo.IsEnabled = true;
+                BtnSalvar.IsEnabled = true;
             }
         }
 

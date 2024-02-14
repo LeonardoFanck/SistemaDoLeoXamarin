@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>1ed29e6e-5ef5-462b-b069-ec6035c55183</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SistemaDoLeo.Modelos</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Categoria.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Cliente.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\DisplayTelas.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\FlyoutItens.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\FormaPgto.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Operador.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\OperadorTela.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Pedido.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\PedidoItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Produto.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\ProximoRegistro.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Tela.cs" />
+  </ItemGroup>
+</Project>

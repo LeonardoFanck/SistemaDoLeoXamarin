@@ -10,7 +10,6 @@ using SistemaDoLeo.Modelos.Classes;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using SistemaDoLeo.Classes.Classes;
 
 namespace SistemaDoLeo.Paginas
 {

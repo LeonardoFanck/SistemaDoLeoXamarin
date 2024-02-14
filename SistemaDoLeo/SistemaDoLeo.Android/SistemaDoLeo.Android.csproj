@@ -95,12 +95,6 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SistemaDoLeo\SistemaDoLeo.csproj">
-      <Project>{AB647484-A1D3-42D0-82AB-D5CEA50BB72E}</Project>
-      <Name>SistemaDoLeo</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\logo.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +174,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_monochrome.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SistemaDoLeo\SistemaDoLeo.csproj">
+      <Project>{fe692c19-4305-4cbd-849b-021c56f92246}</Project>
+      <Name>SistemaDoLeo</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

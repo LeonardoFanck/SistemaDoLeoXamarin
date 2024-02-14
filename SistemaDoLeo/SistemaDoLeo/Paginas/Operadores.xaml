@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            Title="Operadores"
+            x:Class="SistemaDoLeo.Paginas.Operadores">
+    <!--LISTAGEM-->
+    <ContentPage Title="Listagem">
+        <StackLayout>
+            <SearchBar x:Name="SrcBuscar" Placeholder="Digite para buscar pelo nome..." 
+                    Margin="10" BackgroundColor="White" TextColor="Black" PlaceholderColor="Black"
+                    TextChanged="SrcBuscar_TextChanged"/>
+
+            <RefreshView x:Name="RefreshV"
+                     RefreshColor="Black"
+                     Refreshing="RefreshV_Refreshing">
+                <CollectionView x:Name="CvListagem"
+                                Margin="10" HorizontalOptions="CenterAndExpand" SelectionMode="Single"
+                                ItemsSource="{Binding Operador}" SelectionChanged="CvListagem_SelectionChanged" >
+
+                    <CollectionView.EmptyView>
+                        <StackLayout Padding="10">
+                            <Label HorizontalOptions="Center" Text="Nenhum Item localizado" FontSize="Body"/>
+                        </StackLayout>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <SwipeView>
+                                <SwipeView.LeftItems>
+                                    <SwipeItem x:Name="SwDeletar" Text="Deletar"
+                                           BackgroundColor="Red"
+                                           Invoked="SwDeletar_Invoked"/>
+                                </SwipeView.LeftItems>
+                                <StackLayout Padding="3">
+                                    <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False" CornerRadius="6">
+                                        <Label TextColor="Black" FontAttributes="Bold" FontSize="Body" VerticalOptions="Center" HorizontalOptions="Center" >
+                                            <Label.Text>
+                                                <MultiBinding StringFormat="{}{0}   -   {1}">
+                                                    <Binding Path="Id" />
+                                                    <Binding Path="Nome" />
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
+                                    </Frame>
+                                </StackLayout>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+        </StackLayout>
+    </ContentPage>
+
+    <!--CADASTRO-->
+    <ContentPage Title="Cadastro">
+        <Grid>
+            <StackLayout VerticalOptions="Start" Padding="10">
+                <!--CADASTRO PRINCIPAL-->
+                <Frame BorderColor="Black" CornerRadius="10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Margin="0,20,0,0"
+                               Text="Código"
+                               TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="End"/>
+                        <Entry Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2"
+                               x:Name="TxtCodigo"
+                               IsEnabled="False"/>
+
+                        <Label Grid.Row="0" Grid.Column="3" 
+                               Text="Inativo"
+                               TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                        <CheckBox Grid.Row="0" Grid.Column="4" 
+                                  x:Name="ChkInativo"
+                                  TabIndex="-1"
+                                  Color="Black"/>
+
+                        <Label Grid.Row="1" Grid.Column="3" 
+                                   Text="Admin"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                        <CheckBox Grid.Row="1" Grid.Column="4" 
+                                      x:Name="ChkAdmin"
+                                      TabIndex="-1"
+                                      Color="Black"/>
+
+                        <Label Grid.Row="2" Grid.Column="0" 
+                               Text="Nome"
+                               TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                        <Entry Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" 
+                               x:Name="TxtNome"
+                               ReturnType="Next" Keyboard="Default"/>
+
+                        <Label Grid.Row="3" Grid.Column="0" 
+                                   Text="Senha"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                        <Entry Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" 
+                                   x:Name="TxtSenha"
+                                   ReturnType="Done" IsPassword="True" Keyboard="Default" Completed="BtnSalvar_Clicked"/>
+
+                        <Label Grid.Row="3" Grid.Column="3" 
+                                   Text="Visualizar"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                        <CheckBox Grid.Row="3" Grid.Column="4" 
+                                      x:Name="ChkVisualizar"
+                                      TabIndex="-1"
+                                      Color="Black"
+                                      CheckedChanged="ChkVisualizar_CheckedChanged"/>
+                    </Grid>
+                </Frame>
+
+                <!--TELAS-->
+
+                <Frame BorderColor="Black" Padding="3">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                               Text="Tela"
+                               TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="StartAndExpand" FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"/>
+                        
+                        <Label Grid.Row="0" Grid.Column="3" Grid.RowSpan="1"
+                               Text="Ativo"
+                               TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="Center" FontAttributes="Bold"/>
+
+                        <Label Grid.Row="0" Grid.Column="4" Grid.RowSpan="1"
+                               Text="Novo"
+                               TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="Center" FontAttributes="Bold"/>
+
+                        <Label Grid.Row="0" Grid.Column="5" Grid.RowSpan="1"
+                               Text="Editar"
+                               TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="Center" FontAttributes="Bold"/>
+
+                        <Label Grid.Row="0" Grid.Column="6" Grid.RowSpan="1"
+                               Text="Excluir"
+                               TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="Center" FontAttributes="Bold"/>
+                    </Grid>
+                </Frame>
+
+                <CollectionView 
+                    ItemsLayout="VerticalList"
+                    SelectionMode="None"
+                    x:Name="CollectionTelas">
+
+                    <CollectionView.EmptyView>
+                        <StackLayout Padding="10">
+                            <Label HorizontalOptions="Center" Text="Nenhum Item localizado" FontSize="Body"/>
+                        </StackLayout>
+                    </CollectionView.EmptyView>
+                    
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False">
+                                <StackLayout>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/> 
+                                            <ColumnDefinition/> 
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                                x:Name="LblTela" Text="{Binding Nome}"
+                                                HorizontalTextAlignment="Start"
+                                                FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap"/>
+
+                                        <CheckBox Grid.Row="0" Grid.Column="3"
+                                                  x:Name="ChkAtivo"
+                                                  IsChecked="{Binding Ativo}"
+                                                  IsEnabled="{Binding EnableAtivo}"
+                                                  Color="Black"
+                                                  Margin="3,0,0,0"/>
+
+                                        <CheckBox Grid.Row="0" Grid.Column="4"
+                                                  x:Name="ChkNovo"
+                                                  IsChecked="{Binding Novo}"
+                                                  IsEnabled="{Binding EnableNovo}"
+                                                  Color="Black" Margin="11,0,0,0"/>
+
+                                        <CheckBox Grid.Row="0" Grid.Column="5"
+                                                  x:Name="ChkEditar"
+                                                  IsChecked="{Binding Editar}"
+                                                  IsEnabled="{Binding EnableEditar}"
+                                                  Color="Black" Margin="15,0,0,0"/>
+
+                                        <CheckBox Grid.Row="0" Grid.Column="6"
+                                                  x:Name="ChkExcluir"
+                                                  IsChecked="{Binding Excluir}"
+                                                  IsEnabled="{Binding EnableExcluir}"
+                                                  Color="Black" Margin="20,0,0,0"/>
+                                    </Grid>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!--BOTÕES-->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Grid.Column="0"
+                            x:Name="BtnNovo" Text="Novo"
+                            Margin="10" BackgroundColor="LightPink"
+                            Clicked="BtnNovo_Clicked"/>
+
+                    <Button Grid.Row="0" Grid.Column="1"
+                            x:Name="BtnEditar" Text="Editar"
+                            Margin="10" BackgroundColor="LightSteelBlue"
+                            Clicked="BtnEditar_Clicked"/>
+
+                    <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                            x:Name="BtnSalvar" Text="Salvar"
+                            Margin="40, 5" BackgroundColor="LightSeaGreen"
+                            Clicked="BtnSalvar_Clicked"/>
+                </Grid>
+            </StackLayout>
+            
+            <!--ADICIONAR A OPÇÃO DE LOADING-->
+            
+        </Grid>
+    </ContentPage>
+</TabbedPage>

@@ -22,15 +22,6 @@
     <Compile Update="Paginas\Categorias.xaml.cs">
       <DependentUpon>Categorias.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Paginas\Clientes.xaml.cs">
-      <DependentUpon>Clientes.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Paginas\FormasPgto.xaml.cs">
-      <DependentUpon>FormasPgto.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Paginas\Produtos.xaml.cs">
-      <DependentUpon>Produtos.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -49,6 +40,12 @@
     <EmbeddedResource Update="Paginas\Home.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Paginas\Operadores.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Paginas\Pedidos.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Paginas\Produtos.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -60,5 +57,5 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <Import Project="..\..\..\SistemaDoLeo.Classes\SistemaDoLeo.Classes.projitems" Label="Shared" />
+  <Import Project="..\..\SistemaDoLeo.Modelos\SistemaDoLeo.Modelos.projitems" Label="Shared" />
 </Project>

@@ -83,7 +83,7 @@ namespace SistemaDoLeo.Paginas
                 return;
             }
 
-            var confirmacao = await DisplayAlert(title:ToString(), $"Deseja realmente fazer a exclusão do Registro {selecionado.Nome}?", "Confirmar", "Cancelar");
+            var confirmacao = await DisplayAlert(Titulo, $"Deseja realmente fazer a exclusão do Registro {selecionado.Nome}?", "Confirmar", "Cancelar");
 
             if (confirmacao)
             {

@@ -1,12 +1,117 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SistemaDoLeo.Paginas.Produtos">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+             x:Class="SistemaDoLeo.Paginas.Produtos"
+            Title="Produto">
+    <ContentPage Title="Listagem">
+        <!--<StackLayout>
+            <SearchBar x:Name="SrcBuscar" Placeholder="Digite para buscar pelo nome..." 
+                       Margin="10" BackgroundColor="White" TextColor="Black" PlaceholderColor="Black"
+                       TextChanged="SrcBuscar_TextChanged"/>
+
+            <RefreshView x:Name="RefreshV"
+                         RefreshColor="Black"
+                         Refreshing="RefreshV_Refreshing">
+                <CollectionView x:Name="CvListagem"
+                                Margin="10" HorizontalOptions="CenterAndExpand" SelectionMode="Single"
+                                ItemsSource="{Binding Categoria}" SelectionChanged="CvListagem_SelectionChanged" >
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <SwipeView>
+                                <SwipeView.LeftItems>
+                                    <SwipeItem x:Name="SwDeletar" Text="Deletar"
+                                               BackgroundColor="Red"
+                                               Invoked="SwDeletar_Invoked"/>
+                                </SwipeView.LeftItems>
+                                <StackLayout Padding="3">
+                                    <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False" CornerRadius="6">
+                                        <Label TextColor="Black" FontAttributes="Bold" FontSize="Body" VerticalOptions="Center" HorizontalOptions="Center" >
+                                            <Label.Text>
+                                                <MultiBinding StringFormat="{}{0}   -   {1}">
+                                                    <Binding Path="Id" />
+                                                    <Binding Path="Nome" />
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
+                                    </Frame>
+                                </StackLayout>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+        </StackLayout>-->
+    </ContentPage>
+
+    <ContentPage Title="Cadastro">
+        <!--<ScrollView>
+            <Grid>
+                <StackLayout VerticalOptions="Start" Padding="10">
+                    <Frame BorderColor="Black" CornerRadius="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="0" Grid.Column="0"
+                               Text="Código"
+                               TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="End"/>
+                            <Entry Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1"
+                               x:Name="TxtCodigo"
+                               IsEnabled="False"/>
+
+                            <Label Grid.Row="0" Grid.Column="2" 
+                               Text="Inativo"
+                               TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                            <CheckBox Grid.Row="0" Grid.Column="3" 
+                                  x:Name="ChkInativo"
+                                  TabIndex="-1"
+                                  Color="Black"/>
+
+                            <Label Grid.Row="1" Grid.Column="0" 
+                               Text="Nome"
+                               TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                            <Entry Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" 
+                               x:Name="TxtNome"
+                               ReturnType="Done" Keyboard="Default" Completed="BtnSalvar_Clicked"/>
+                        </Grid>
+                    </Frame>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Button Grid.Row="0" Grid.Column="0"
+                            x:Name="BtnNovo" Text="Novo"
+                            Margin="10" BackgroundColor="LightPink"
+                            Clicked="BtnNovo_Clicked"/>
+
+                        <Button Grid.Row="0" Grid.Column="1"
+                            x:Name="BtnEditar" Text="Editar"
+                            Margin="10" BackgroundColor="LightSteelBlue"
+                            Clicked="BtnEditar_Clicked"/>
+
+                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                            x:Name="BtnSalvar" Text="Salvar"
+                            Margin="40, 5" BackgroundColor="LightSeaGreen"
+                            Clicked="BtnSalvar_Clicked"/>
+                    </Grid>
+                </StackLayout>
+            </Grid>
+        </ScrollView> -->
+    </ContentPage>
+</TabbedPage>

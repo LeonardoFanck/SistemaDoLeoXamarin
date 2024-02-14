@@ -151,9 +151,64 @@ namespace SistemaDoLeo.Paginas
             CvListagem.ItemsSource = listaBase.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList();
         }
 
-        private void SwDeletar_Invoked(object sender, EventArgs e)
+        private async void SwDeletar_Invoked(object sender, EventArgs e)
         {
+            var selecionado = (sender as SwipeItem)?.BindingContext as Operador;
 
+            if (selecionado == null)
+            {
+                await DisplayAlert(Titulo, "Nenhum item selecionado", "Ok");
+
+                return;
+            }
+
+            var confirmacao = await DisplayAlert(title: ToString(), $"Deseja realmente fazer a exclusão do Registro {selecionado.Nome}?", "Confirmar", "Cancelar");
+
+            if (confirmacao)
+            {
+                var response = await _client.DeleteAsync($"{url}/{selecionado.Id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await DisplayAlert(Titulo, $"Ocorreu um erro ao deletar o registro: {selecionado.Nome}", "Ok");
+
+                    return;
+                }
+
+                // PEGA AS TELAS DO OPERADOR PARA ENTÃO DELETAR
+                await GetOperadorTelas(selecionado.Id);
+
+                foreach(var tela in listaTelasOperador)
+                {
+                    var reponseTelas = await _client.DeleteAsync($"{urlOperadorTelas}/{tela.Id}");
+
+                    if (!reponseTelas.IsSuccessStatusCode)
+                    {
+                        await DisplayAlert(Titulo, $"Ocorreu um erro ao tentar deletar a tela: {tela.Nome} do Operador: {selecionado.Nome}, contate o Administrador!", "OK");
+                    }
+                }
+
+                listaBase.Remove(selecionado);
+
+                // LIMPA OS CAMPOS DO CADASTRO PARA NÃO DEIXAR EDITAR O ITEM EXCLUIDO
+                LimpaCampos();
+                LimpaCamposTelas();
+
+                if (SrcBuscar.Text == null)
+                {
+                    CvListagem.ItemsSource = new List<Operador>(listaBase);
+                }
+                else
+                {
+                    CvListagem.ItemsSource = new List<Operador>(listaBase.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList());
+                }
+
+                await DisplayAlert(Titulo, $"Deletado o registro id: {selecionado.Id} - Atualizar para um Toast", "Ok");
+            }
+            else
+            {
+                return;
+            }
         }
 
         private async Task<bool> validaCampos()

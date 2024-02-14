@@ -10,9 +10,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SistemaDoLeo.Android", "Sis
 		{FE692C19-4305-4CBD-849B-021C56F92246} = {FE692C19-4305-4CBD-849B-021C56F92246}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamarinAPI", "..\API\XamarinAPI\XamarinAPI.csproj", "{7C4F9106-6904-442F-8A07-C462BB034F17}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SistemaDoLeo.Modelos", "SistemaDoLeo.Modelos\SistemaDoLeo.Modelos.shproj", "{1ED29E6E-5EF5-462B-B069-EC6035C55183}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SistemaDoLeo.Api", "SistemaDoLeo.Api\SistemaDoLeo.Api.csproj", "{4ED664A9-915D-4162-BDB2-120B2A5ECDFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,10 +30,10 @@ Global
 		{0B69037A-E604-4F0B-BDBE-1C909212FF3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B69037A-E604-4F0B-BDBE-1C909212FF3E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B69037A-E604-4F0B-BDBE-1C909212FF3E}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{7C4F9106-6904-442F-8A07-C462BB034F17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C4F9106-6904-442F-8A07-C462BB034F17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C4F9106-6904-442F-8A07-C462BB034F17}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C4F9106-6904-442F-8A07-C462BB034F17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ED664A9-915D-4162-BDB2-120B2A5ECDFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ED664A9-915D-4162-BDB2-120B2A5ECDFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ED664A9-915D-4162-BDB2-120B2A5ECDFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ED664A9-915D-4162-BDB2-120B2A5ECDFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,7 +43,7 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SistemaDoLeo.Modelos\SistemaDoLeo.Modelos.projitems*{1ed29e6e-5ef5-462b-b069-ec6035c55183}*SharedItemsImports = 13
-		SistemaDoLeo.Modelos\SistemaDoLeo.Modelos.projitems*{7c4f9106-6904-442f-8a07-c462bb034f17}*SharedItemsImports = 5
+		SistemaDoLeo.Modelos\SistemaDoLeo.Modelos.projitems*{4ed664a9-915d-4162-bdb2-120b2a5ecdfe}*SharedItemsImports = 5
 		SistemaDoLeo.Modelos\SistemaDoLeo.Modelos.projitems*{fe692c19-4305-4cbd-849b-021c56f92246}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

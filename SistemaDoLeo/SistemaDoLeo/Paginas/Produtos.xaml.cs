@@ -22,8 +22,11 @@ namespace SistemaDoLeo.Paginas
         private int Cadastro = 1;
         private int Editar = 2;
 
+        private string Titulo = "Produto";
+
         private List<Categoria> listaCategorias = new List<Categoria>();
         private List<Produto> listaProdutos = new List<Produto>();
+        private ProximoRegistro proximoRegistro;
 
         private readonly HttpClient _client;
         private string urlCategoria = $"{Links.ip}/Categoria";
@@ -72,34 +75,336 @@ namespace SistemaDoLeo.Paginas
             
         }
 
-        private void CvListagem_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void CvListagem_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            CurrentPage = Children[1];
 
+            var selecionado = (Produto)e.CurrentSelection.FirstOrDefault();
+
+
+            if (selecionado != null)
+            {
+                var categoriaIndex = listaCategorias.IndexOf(listaCategorias.FirstOrDefault(l => l.Id == selecionado.CategoriaId));
+                
+                TxtCodigo.Text = selecionado.Id.ToString();
+                TxtNome.Text = selecionado.Nome;
+                PkrCategoria.SelectedIndex = categoriaIndex;
+                TxtPreco.Text = selecionado.Preco.ToString();
+                TxtCusto.Text = selecionado.Custo.ToString();
+                TxtUnidade.Text = selecionado.Unidade;
+                ChkInativo.IsChecked = selecionado.Inativo;
+
+                await validaStatus(Visualizar);
+
+                // limpa o selecionado para poder selecionar o mesmo novamente
+                CvListagem.SelectedItem = null;
+            }
         }
 
-        private void SwDeletar_Invoked(object sender, EventArgs e)
+        private async Task validaStatus(int status)
         {
+            List<DisplayTelas> listaComValidacoes = new List<DisplayTelas>();
 
+            if (status == Visualizar)
+            {
+                this.Status = Visualizar;
+
+                TxtCodigo.IsEnabled = false;
+                TxtNome.IsEnabled = false;
+                PkrCategoria.IsEnabled = false;
+                TxtPreco.IsEnabled = false;
+                TxtCusto.IsEnabled = false;
+                TxtUnidade.IsEnabled = false;
+                ChkInativo.IsEnabled = false;
+
+                BtnNovo.Text = "Novo";
+
+                BtnEditar.IsEnabled = true;
+                BtnNovo.IsEnabled = true;
+                BtnSalvar.IsEnabled = false;
+            }
+            else if (status == Editar)
+            {
+                this.Status = Editar;
+
+                TxtCodigo.IsEnabled = false;
+                TxtNome.IsEnabled = true;
+                PkrCategoria.IsEnabled = true;
+                TxtPreco.IsEnabled = true;
+                TxtCusto.IsEnabled = true;
+                TxtUnidade.IsEnabled = true;
+                ChkInativo.IsEnabled = true;
+
+                BtnEditar.IsEnabled = false;
+                BtnNovo.IsEnabled = false;
+                BtnSalvar.IsEnabled = true;
+
+            }
+            else
+            {
+                this.Status = Cadastro;
+
+                TxtCodigo.IsEnabled = false;
+                TxtNome.IsEnabled = true;
+                PkrCategoria.IsEnabled = true;
+                TxtPreco.IsEnabled = true;
+                TxtCusto.IsEnabled = true;
+                TxtUnidade.IsEnabled = true;
+                ChkInativo.IsEnabled = true;
+
+                BtnNovo.Text = "Limpar";
+
+                BtnEditar.IsEnabled = false;
+                BtnNovo.IsEnabled = true;
+                BtnSalvar.IsEnabled = true;
+            }
         }
 
-        private void BtnSalvar_Clicked(object sender, EventArgs e)
+        private async void SwDeletar_Invoked(object sender, EventArgs e)
         {
+            var selecionado = (sender as SwipeItem)?.BindingContext as Produto;
 
+            if (selecionado == null)
+            {
+                await DisplayAlert(Titulo, "Nenhum item selecionado", "Ok");
+
+                return;
+            }
+
+            var confirmacao = await DisplayAlert(Titulo, $"Deseja realmente fazer a exclusão do Registro: {selecionado.Nome}?", "Confirmar", "Cancelar");
+
+            if (confirmacao)
+            {
+                var response = await _client.DeleteAsync($"{url}/{selecionado.Id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await DisplayAlert(Titulo, $"Ocorreu um erro ao deletar o registro: {selecionado.Nome}", "Ok");
+
+                    return;
+                }
+
+                listaProdutos.Remove(selecionado);
+
+                // LIMPA OS CAMPOS DO CADASTRO PARA NÃO DEIXAR EDITAR O ITEM EXCLUIDO
+                LimpaCampos();
+
+                if (SrcBuscar.Text == null)
+                {
+                    CvListagem.ItemsSource = new List<Produto>(listaProdutos);
+                }
+                else
+                {
+                    CvListagem.ItemsSource = new List<Produto>(listaProdutos.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList());
+                }
+
+                await DisplayAlert(Titulo, $"Deletado o registro id: {selecionado.Id} - Atualizar para um Toast", "Ok");
+            }
+            else
+            {
+                return;
+            }
         }
 
-        private void BtnNovo_Clicked(object sender, EventArgs e)
+        private async void BtnSalvar_Clicked(object sender, EventArgs e)
         {
+            if (await validaCampos() == false)
+            {
+                //await DisplayAlert(Titulo, "Campo faltando", "Ok");
 
+                return;
+            }
+
+            Produto produto = new Produto();
+
+            var categoria = PkrCategoria.SelectedItem as Categoria;
+
+            if (Status == Cadastro)
+            {
+                produto = new Produto
+                {
+                    Nome = TxtNome.Text,
+                    CategoriaId = categoria.Id,
+                    Preco = Convert.ToDecimal(TxtPreco.Text),
+                    Custo = Convert.ToDecimal(TxtCusto.Text),
+                    Unidade = TxtUnidade.Text,
+                    Estoque = Convert.ToInt32(TxtEstoque.Text),
+                    Inativo = ChkInativo.IsChecked
+                };
+
+            }
+            else if (Status == Editar)
+            {
+                produto = new Produto
+                {
+                    Id = Convert.ToInt32(TxtCodigo.Text),
+                    Nome = TxtNome.Text,
+                    CategoriaId = categoria.Id,
+                    Preco = Convert.ToDecimal(TxtPreco.Text),
+                    Custo = Convert.ToDecimal(TxtCusto.Text),
+                    Unidade = TxtUnidade.Text,
+                    Estoque = Convert.ToInt32(TxtEstoque.Text),
+                    Inativo = ChkInativo.IsChecked
+                };
+            }
+
+            if (await SalvarRegistro(produto))
+            {
+                await validaStatus(Visualizar);
+            }
         }
 
-        private void BtnEditar_Clicked(object sender, EventArgs e)
+        private async Task<bool> validaCampos()
         {
+            if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
+            {
+                // COLOCAR UM TOAST DE NECESSARIO INFORMAR UM ID
 
+                return false;
+            }
+            else if (TxtNome.Text == "" || TxtNome.Text == null)
+            {
+                TxtNome.Focus();
+
+                return false;
+            }
+            else if (PkrCategoria.SelectedIndex == -1 || PkrCategoria.SelectedItem == null)
+            {
+                return false;
+            }
+            else if (TxtPreco.Text == "" || TxtPreco.Text == null)
+            {
+                TxtPreco.Focus();
+
+                return false;
+            }
+            else if (TxtCusto.Text == "" || TxtCusto.Text == null)
+            {
+                TxtCusto.Focus();
+
+                return false;
+            }
+            else if (TxtUnidade.Text == "" || TxtUnidade.Text == null)
+            {
+                TxtUnidade.Focus();
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> SalvarRegistro(Produto produto)
+        {
+            var json = JsonConvert.SerializeObject(produto);
+            var conteudo = new StringContent(json, Encoding.UTF8, "application/json");
+
+            if (produto.Id == 0)
+            {
+                var response = await _client.PostAsync(url, conteudo);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await DisplayAlert(Titulo, "Ocorreu um erro no Cadastro", "Ok");
+
+                    return false;
+                }
+
+                var novoRegistro = JsonConvert.DeserializeObject<Produto>(await response.Content.ReadAsStringAsync());
+
+                await AtualizaProximoRegistro(novoRegistro.Id);
+
+                TxtCodigo.Text = novoRegistro.Id.ToString();
+                listaProdutos.Add(novoRegistro);
+                CvListagem.ItemsSource = new List<Produto>(listaProdutos);
+            }
+            else
+            {
+                var response = await _client.PutAsync($"{url}/{produto.Id}", conteudo);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await DisplayAlert(Titulo, "Ocorreu um erro ao fazer a Alteração", "Ok");
+
+                    return false;
+                }
+
+                listaProdutos.Remove(listaProdutos.FirstOrDefault(l => l.Id == produto.Id));
+                listaProdutos.Add(produto);
+                CvListagem.ItemsSource = new List<Produto>(listaProdutos).OrderBy(i => i.Id);
+            }
+
+            return true;
+        }
+
+        private async Task AtualizaProximoRegistro(int id)
+        {
+            // ATUALIZA O PROXIMO REGISTRO COM BASE NO RETORNO DO POST
+            proximoRegistro.Produto = id;
+
+            var json = JsonConvert.SerializeObject(proximoRegistro);
+            var conteudo = new StringContent(json, Encoding.UTF8, "application/json");
+
+            await _client.PutAsync(Links.proximoRegistro, conteudo);
+        }
+
+        private async void BtnNovo_Clicked(object sender, EventArgs e)
+        {
+            LimpaCampos();
+
+            await validaStatus(Cadastro);
+
+            // PEGA PROXIMO REGISTRO
+            var id = await PegaProximoRegistro();
+
+            TxtCodigo.Text = id.ToString();
+        }
+
+        private async Task<int> PegaProximoRegistro()
+        {
+            var json = await _client.GetStringAsync(Links.proximoRegistro);
+
+            proximoRegistro = JsonConvert.DeserializeObject<ProximoRegistro>(json);
+
+            proximoRegistro.Produto += 1;
+
+            return proximoRegistro.Produto;
+        }
+
+        private async void BtnEditar_Clicked(object sender, EventArgs e)
+        {
+            if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
+            {
+                await DisplayAlert(Titulo, "Necessário selecionar um registro", "Ok");
+
+                return;
+            }
+
+            await validaStatus(Editar);
         }
 
         private async void RefreshV_Refreshing(object sender, EventArgs e)
         {
             await CarregaListaProdutos();
+        }
+
+        private void LimpaCampos()
+        {
+            TxtCodigo.Text = string.Empty;
+            TxtNome.Text = string.Empty;
+            PkrCategoria.SelectedIndex = -1;
+            TxtPreco.Text = string.Empty;
+            TxtCusto.Text = string.Empty;
+            TxtUnidade.Text = string.Empty;
+            ChkInativo.IsChecked = false;
+        }
+
+        private void PkrCategoria_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(Status != Visualizar)
+            {
+                TxtPreco.Focus();
+            }
         }
     }
 }

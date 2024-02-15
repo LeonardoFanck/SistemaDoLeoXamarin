@@ -24,12 +24,11 @@ namespace SistemaDoLeo.Paginas
         private int Visualizar = 0;
         private int Cadastro = 1;
         private int Editar = 2;
+
         List<DisplayTelas> listaTelasOperador = new List<DisplayTelas>();
         List<Tela> listaTelas = new List<Tela>();
         private List<Operador> listaBase = new List<Operador>();
         private ProximoRegistro proximoRegistro;
-
-        private bool EneableChkAtivo { get; set; }
 
         private readonly HttpClient _client;
         private string url = $"{Links.ip}/Operador";
@@ -162,7 +161,7 @@ namespace SistemaDoLeo.Paginas
                 return;
             }
 
-            var confirmacao = await DisplayAlert(title: ToString(), $"Deseja realmente fazer a exclusão do Registro {selecionado.Nome}?", "Confirmar", "Cancelar");
+            var confirmacao = await DisplayAlert(Titulo, $"Deseja realmente fazer a exclusão do Registro {selecionado.Nome}?", "Confirmar", "Cancelar");
 
             if (confirmacao)
             {

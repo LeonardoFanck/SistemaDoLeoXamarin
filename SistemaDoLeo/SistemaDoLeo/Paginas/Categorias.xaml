@@ -46,7 +46,7 @@
     <ContentPage Title="Cadastro">
         <ScrollView>
             <Grid>
-                <StackLayout VerticalOptions="Start" Padding="10">
+                <StackLayout VerticalOptions="StartAndExpand" Padding="10">
                     <Frame BorderColor="Black" CornerRadius="10">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -83,7 +83,9 @@
                                    ReturnType="Done" Keyboard="Default" Completed="BtnSalvar_Clicked"/>
                         </Grid>
                     </Frame>
+                </StackLayout>
 
+                <StackLayout VerticalOptions="End" Margin="0,15">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -98,16 +100,19 @@
                         <Button Grid.Row="0" Grid.Column="0"
                                 x:Name="BtnNovo" Text="Novo"
                                 Margin="10" BackgroundColor="LightPink"
+                                VerticalOptions="End"
                                 Clicked="BtnNovo_Clicked"/>
 
                         <Button Grid.Row="0" Grid.Column="1"
                                 x:Name="BtnEditar" Text="Editar"
                                 Margin="10" BackgroundColor="LightSteelBlue"
+                                VerticalOptions="End"
                                 Clicked="BtnEditar_Clicked"/>
 
                         <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                 x:Name="BtnSalvar" Text="Salvar"
                                 Margin="40, 5" BackgroundColor="LightSeaGreen"
+                                VerticalOptions="End"
                                 Clicked="BtnSalvar_Clicked"/>
                     </Grid>
                 </StackLayout>

@@ -4,7 +4,7 @@
              x:Class="SistemaDoLeo.Paginas.Produtos"
             Title="Produto">
     <ContentPage Title="Listagem">
-        <!--<StackLayout>
+        <StackLayout>
             <SearchBar x:Name="SrcBuscar" Placeholder="Digite para buscar pelo nome..." 
                        Margin="10" BackgroundColor="White" TextColor="Black" PlaceholderColor="Black"
                        TextChanged="SrcBuscar_TextChanged"/>
@@ -14,7 +14,7 @@
                          Refreshing="RefreshV_Refreshing">
                 <CollectionView x:Name="CvListagem"
                                 Margin="10" HorizontalOptions="CenterAndExpand" SelectionMode="Single"
-                                ItemsSource="{Binding Categoria}" SelectionChanged="CvListagem_SelectionChanged" >
+                                SelectionChanged="CvListagem_SelectionChanged" >
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <SwipeView>
@@ -40,11 +40,11 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </RefreshView>
-        </StackLayout>-->
+        </StackLayout>
     </ContentPage>
 
     <ContentPage Title="Cadastro">
-        <!--<ScrollView>
+        <ScrollView>
             <Grid>
                 <StackLayout VerticalOptions="Start" Padding="10">
                     <Frame BorderColor="Black" CornerRadius="10">
@@ -58,32 +58,74 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
 
                             <Label Grid.Row="0" Grid.Column="0"
-                               Text="Código"
-                               TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="End"/>
+                                   Text="Código"
+                                   TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="End"/>
                             <Entry Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1"
-                               x:Name="TxtCodigo"
-                               IsEnabled="False"/>
+                                   x:Name="TxtCodigo"
+                                   IsEnabled="False"/>
 
                             <Label Grid.Row="0" Grid.Column="2" 
-                               Text="Inativo"
-                               TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                   Text="Inativo"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
                             <CheckBox Grid.Row="0" Grid.Column="3" 
-                                  x:Name="ChkInativo"
-                                  TabIndex="-1"
-                                  Color="Black"/>
+                                      x:Name="ChkInativo"
+                                      TabIndex="-1"
+                                      Color="Black"/>
 
                             <Label Grid.Row="1" Grid.Column="0" 
-                               Text="Nome"
-                               TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                   Text="Nome"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
                             <Entry Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" 
-                               x:Name="TxtNome"
-                               ReturnType="Done" Keyboard="Default" Completed="BtnSalvar_Clicked"/>
+                                   x:Name="TxtNome"
+                                   ReturnType="Next" Keyboard="Default"/>
+                            
+                            <Label Grid.Row="2" Grid.Column="0"
+                                   Text="Categoria"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                            <Picker Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
+                                    x:Name="PkrCategoria" Title="Selecione uma Categoria" ItemDisplayBinding="{Binding Nome}"
+                                    HorizontalTextAlignment="Center">
+                            </Picker>
+
+                            <Label Grid.Row="3" Grid.Column="0"
+                                   Text="Preço"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                            <Entry Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                                   x:Name="TxtPreco"
+                                   ReturnType="Next" Keyboard="Numeric" />
+                            
+                            <Label Grid.Row="4" Grid.Column="0"
+                                   Text="Custo"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                            <Entry Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
+                                   x:Name="TxtCusto"
+                                   ReturnType="Next" Keyboard="Numeric" />
+
+                            <Label Grid.Row="5" Grid.Column="0"
+                                   Text="Unidade"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                            <Entry Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="1"
+                                   x:Name="TxtUnidade"
+                                   ReturnType="Done" Keyboard="Default" Completed="BtnSalvar_Clicked"/>
+
+                            <Label Grid.Row="5" Grid.Column="2"
+                                   Text="Estoque"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                            <Entry Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="1"
+                                   x:Name="TxtEstoque"
+                                   IsEnabled="False" Keyboard="Numeric"/>
                         </Grid>
                     </Frame>
+                </StackLayout>
 
+                <StackLayout VerticalOptions="End" Margin="0,15">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -96,22 +138,22 @@
                         </Grid.RowDefinitions>
 
                         <Button Grid.Row="0" Grid.Column="0"
-                            x:Name="BtnNovo" Text="Novo"
-                            Margin="10" BackgroundColor="LightPink"
-                            Clicked="BtnNovo_Clicked"/>
+                                x:Name="BtnNovo" Text="Novo"
+                                Margin="10" BackgroundColor="LightPink"
+                                Clicked="BtnNovo_Clicked"/>
 
                         <Button Grid.Row="0" Grid.Column="1"
-                            x:Name="BtnEditar" Text="Editar"
-                            Margin="10" BackgroundColor="LightSteelBlue"
-                            Clicked="BtnEditar_Clicked"/>
+                                x:Name="BtnEditar" Text="Editar"
+                                Margin="10" BackgroundColor="LightSteelBlue"
+                                Clicked="BtnEditar_Clicked"/>
 
                         <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                            x:Name="BtnSalvar" Text="Salvar"
-                            Margin="40, 5" BackgroundColor="LightSeaGreen"
-                            Clicked="BtnSalvar_Clicked"/>
+                                x:Name="BtnSalvar" Text="Salvar"
+                                Margin="40, 5" BackgroundColor="LightSeaGreen"
+                                Clicked="BtnSalvar_Clicked"/>
                     </Grid>
                 </StackLayout>
             </Grid>
-        </ScrollView> -->
-    </ContentPage>
+        </ScrollView> 
+    </ContentPage> 
 </TabbedPage>

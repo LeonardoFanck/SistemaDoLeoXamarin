@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using SistemaDoLeo.Paginas;
+using Xamarin.Forms;
 
 namespace SistemaDoLeo
 {
@@ -8,7 +9,8 @@ namespace SistemaDoLeo
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new MainPage());
+            //MainPage = new NavigationPage(new MainPage());
+            MainPage = new NavigationPage(new Produtos());
         }
 
         protected override void OnStart()

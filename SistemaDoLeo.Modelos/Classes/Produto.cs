@@ -12,6 +12,7 @@ namespace SistemaDoLeo.Modelos.Classes
         public string Nome { get; set; } = string.Empty;
         public decimal Preco { get; set; } = decimal.Zero;
         public decimal Custo { get; set; } = decimal.Zero;
+        public int Categoria { get; set; }
         public string Unidade { get; set; } = string.Empty;
         public long Estoque { get; set; } = 0;
         public bool Inativo { get; set; } = false;

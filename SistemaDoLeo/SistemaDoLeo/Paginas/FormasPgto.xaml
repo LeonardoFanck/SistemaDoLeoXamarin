@@ -79,7 +79,7 @@
                                Text="Nome"
                                TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
                             <Entry Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" 
-                               x:Name="TxtNome"
+                               x:Name="TxtNome" MaxLength="70"
                                ReturnType="Done" Keyboard="Default" Completed="BtnSalvar_Clicked"/>
                         </Grid>
                     </Frame>

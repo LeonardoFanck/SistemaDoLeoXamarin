@@ -10,6 +10,7 @@ using SistemaDoLeo.Modelos.Classes;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using SistemaDoLeo.Toast;
 
 namespace SistemaDoLeo.Paginas
 {
@@ -110,7 +111,8 @@ namespace SistemaDoLeo.Paginas
                     CvListagem.ItemsSource = new List<Categoria>(listaBase.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList());
                 }
 
-                await DisplayAlert(Titulo, $"Deletado o item id: {selecionado.Id} - Atualizar para um Toast", "Ok");
+                new ToastBase(Titulo, "Registro Deletado", $"Registro: {selecionado.Id} - {selecionado.Nome} deletado com Sucesso" +
+                    $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
             }
             else
             {
@@ -156,8 +158,6 @@ namespace SistemaDoLeo.Paginas
         {
             if (await validaCampos() == false)
             {
-                //await DisplayAlert(Titulo, "Campo faltando", "Ok");
-
                 return;
             }
 
@@ -211,6 +211,11 @@ namespace SistemaDoLeo.Paginas
                 TxtCodigo.Text = novaCategoria.Id.ToString();
                 listaBase.Add(novaCategoria);
                 CvListagem.ItemsSource = new List<Categoria>(listaBase);
+
+                new ToastBase(Titulo, "Registro Salvo", $"Registro salvo com Sucesso!\n" +
+                    $"Código: {novaCategoria.Id}\n" +
+                    $"Nome: {novaCategoria.Nome}\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
             }
             else
             {
@@ -226,6 +231,11 @@ namespace SistemaDoLeo.Paginas
                 listaBase.Remove(listaBase.FirstOrDefault(l => l.Id == categoria.Id));
                 listaBase.Add(categoria);
                 CvListagem.ItemsSource = new List<Categoria>(listaBase).OrderBy(i => i.Id);
+
+                new ToastBase(Titulo, "Registro Atualizado", $"Registro atualizado com Sucesso!\n" +
+                    $"Código: {TxtCodigo.Text}\n" +
+                    $"Nome: {TxtNome.Text}\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
             }
 
             return true;
@@ -246,12 +256,16 @@ namespace SistemaDoLeo.Paginas
         {
             if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
             {
-                // COLOCAR UM TOAST DE NECESSARIO INFORMAR UM ID
+                new ToastBase(Titulo, "Campo Obrigatório", $"Necessário informar o campo Código\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
 
                 return false;
             }
             if (TxtNome.Text == "" || TxtNome.Text == null)
             {
+                new ToastBase(Titulo, "Campo Obrigatório", $"Necessário informar o campo Nome\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
                 TxtNome.Focus();
 
                 return false;

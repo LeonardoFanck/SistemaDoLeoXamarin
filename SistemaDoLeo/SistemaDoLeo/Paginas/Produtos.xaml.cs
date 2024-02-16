@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SistemaDoLeo.DB;
 using SistemaDoLeo.Modelos.Classes;
+using SistemaDoLeo.Toast;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -72,7 +73,7 @@ namespace SistemaDoLeo.Paginas
 
         private void SrcBuscar_TextChanged(object sender, TextChangedEventArgs e)
         {
-            
+            CvListagem.ItemsSource = listaProdutos.Where(p => p.Nome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList();
         }
 
         private async void CvListagem_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -80,7 +81,6 @@ namespace SistemaDoLeo.Paginas
             CurrentPage = Children[1];
 
             var selecionado = (Produto)e.CurrentSelection.FirstOrDefault();
-
 
             if (selecionado != null)
             {
@@ -198,7 +198,8 @@ namespace SistemaDoLeo.Paginas
                     CvListagem.ItemsSource = new List<Produto>(listaProdutos.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList());
                 }
 
-                await DisplayAlert(Titulo, $"Deletado o registro id: {selecionado.Id} - Atualizar para um Toast", "Ok");
+                new ToastBase(Titulo, "Registro Deletado", $"Registro: {selecionado.Id} - {selecionado.Nome} deletado com Sucesso" +
+                    $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
             }
             else
             {
@@ -210,8 +211,6 @@ namespace SistemaDoLeo.Paginas
         {
             if (await validaCampos() == false)
             {
-                //await DisplayAlert(Titulo, "Campo faltando", "Ok");
-
                 return;
             }
 
@@ -228,7 +227,7 @@ namespace SistemaDoLeo.Paginas
                     Preco = Convert.ToDecimal(TxtPreco.Text),
                     Custo = Convert.ToDecimal(TxtCusto.Text),
                     Unidade = TxtUnidade.Text,
-                    Estoque = Convert.ToInt32(TxtEstoque.Text),
+                    Estoque = 0,
                     Inativo = ChkInativo.IsChecked
                 };
 
@@ -258,34 +257,52 @@ namespace SistemaDoLeo.Paginas
         {
             if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
             {
-                // COLOCAR UM TOAST DE NECESSARIO INFORMAR UM ID
+                new ToastBase(Titulo, "Campo Obrigatório", $"Necessário informar o campo Código\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
 
                 return false;
             }
             else if (TxtNome.Text == "" || TxtNome.Text == null)
             {
+                new ToastBase(Titulo, "Campo Obrigatório", $"Necessário informar o campo Nome\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
                 TxtNome.Focus();
 
                 return false;
             }
             else if (PkrCategoria.SelectedIndex == -1 || PkrCategoria.SelectedItem == null)
             {
+                new ToastBase(Titulo, "Campo Obrigatório", $"Necessário informar o campo Categoria\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                PkrCategoria.Focus();
+
                 return false;
             }
             else if (TxtPreco.Text == "" || TxtPreco.Text == null)
             {
+                new ToastBase(Titulo, "Campo Obrigatório", $"Necessário informar o campo Preço\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
                 TxtPreco.Focus();
 
                 return false;
             }
             else if (TxtCusto.Text == "" || TxtCusto.Text == null)
             {
+                new ToastBase(Titulo, "Campo Obrigatório", $"Necessário informar o campo Custo\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
                 TxtCusto.Focus();
 
                 return false;
             }
             else if (TxtUnidade.Text == "" || TxtUnidade.Text == null)
             {
+                new ToastBase(Titulo, "Campo Obrigatório", $"Necessário informar o campo Unidade\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
                 TxtUnidade.Focus();
 
                 return false;
@@ -317,6 +334,11 @@ namespace SistemaDoLeo.Paginas
                 TxtCodigo.Text = novoRegistro.Id.ToString();
                 listaProdutos.Add(novoRegistro);
                 CvListagem.ItemsSource = new List<Produto>(listaProdutos);
+
+                new ToastBase(Titulo, "Registro Salvo", $"Registro salvo com Sucesso!\n" +
+                    $"Código: {novoRegistro.Id}\n" +
+                    $"Nome: {novoRegistro.Nome}\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
             }
             else
             {
@@ -332,6 +354,11 @@ namespace SistemaDoLeo.Paginas
                 listaProdutos.Remove(listaProdutos.FirstOrDefault(l => l.Id == produto.Id));
                 listaProdutos.Add(produto);
                 CvListagem.ItemsSource = new List<Produto>(listaProdutos).OrderBy(i => i.Id);
+
+                new ToastBase(Titulo, "Registro Atualizado", $"Registro atualizado com Sucesso!\n" +
+                    $"Código: {TxtCodigo.Text}\n" +
+                    $"Nome: {TxtNome.Text}\n\n\n " +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
             }
 
             return true;

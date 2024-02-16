@@ -85,7 +85,7 @@
                     </Frame>
                 </StackLayout>
 
-                <StackLayout VerticalOptions="End" Margin="0,15">
+                <StackLayout VerticalOptions="End" Margin="0,40">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />

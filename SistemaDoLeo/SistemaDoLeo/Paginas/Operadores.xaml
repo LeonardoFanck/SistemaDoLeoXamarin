@@ -228,7 +228,7 @@
                 </CollectionView>
 
                 <!--BOTÕES-->
-                <Grid>
+                <Grid Margin="0,40">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />

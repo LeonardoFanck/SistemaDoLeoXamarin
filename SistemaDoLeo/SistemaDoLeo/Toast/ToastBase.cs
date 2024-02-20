@@ -52,12 +52,6 @@ namespace SistemaDoLeo.Toast
             };
 
             await App.Current.MainPage.DisplaySnackBarAsync(opcoes);
-            //var resultado = await notificator.Notify(opcoes);
-
-            //if (resultado.Action == NotificationAction.Clicked)
-            //{
-            //    await App.Current.MainPage.DisplayAlert(titulo, mensagem, "Ok");
-            //}
         }
     }
 }

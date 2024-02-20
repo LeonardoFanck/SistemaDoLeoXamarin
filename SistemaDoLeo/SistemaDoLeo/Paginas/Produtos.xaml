@@ -93,13 +93,14 @@
                                     x:Name="PkrCategoria" Title="Selecione uma Categoria" ItemDisplayBinding="{Binding Nome}"
                                     HorizontalTextAlignment="Center" SelectedIndexChanged="PkrCategoria_SelectedIndexChanged">
                             </Picker>
+                            
                             <!--PREÇO-->
                             <Label Grid.Row="3" Grid.Column="0"
                                    Text="Preço"
                                    TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
                             <Entry Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
                                    x:Name="TxtPreco" MaxLength="10"
-                                   ReturnType="Next" Keyboard="Numeric" />
+                                   ReturnType="Next" Keyboard="Numeric"/>
                             <!--CUSTO-->
                             <Label Grid.Row="4" Grid.Column="0"
                                    Text="Custo"

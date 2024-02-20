@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Categoria.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Cliente.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\DisplayTelas.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Endereco.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\FlyoutItens.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\FormaPgto.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Operador.cs" />

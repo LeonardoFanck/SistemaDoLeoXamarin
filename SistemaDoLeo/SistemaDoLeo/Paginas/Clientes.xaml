@@ -1,12 +1,246 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SistemaDoLeo.Paginas.Clientes">
-    <ContentPage.Content>
+            xmlns:y="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="SistemaDoLeo.Paginas.Clientes"
+            Title="Cliente/Fornecedor">
+    <ContentPage Title="Listagem">
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <!--BUSCA-->
+            <SearchBar x:Name="SrcBuscar" Placeholder="Digite para buscar pelo nome..." 
+                   Margin="10" BackgroundColor="White" TextColor="Black" PlaceholderColor="Black"
+                   TextChanged="SrcBuscar_TextChanged"/>
+            <!--REFRESH-->
+            <RefreshView x:Name="RefreshV"
+                     RefreshColor="Black"
+                     Refreshing="RefreshV_Refreshing">
+                <!--COLLECTION-->
+                <CollectionView x:Name="CvListagem"
+                            Margin="10" HorizontalOptions="CenterAndExpand" SelectionMode="Single"
+                            SelectionChanged="CvListagem_SelectionChanged" >
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <SwipeView>
+                                <!--DELETAR-->
+                                <SwipeView.LeftItems>
+                                    <SwipeItem x:Name="SwDeletar" Text="Deletar"
+                                           BackgroundColor="Red"
+                                           Invoked="SwDeletar_Invoked"/>
+                                </SwipeView.LeftItems>
+                                <!--ITEM DA LISTA-->
+                                <StackLayout Padding="3">
+                                    <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False" CornerRadius="6">
+                                        <Label TextColor="Black" FontAttributes="Bold" FontSize="Body" VerticalOptions="Center" HorizontalOptions="Center" >
+                                            <Label.Text>
+                                                <MultiBinding StringFormat="{}{0}   -   {1}">
+                                                    <Binding Path="Id" />
+                                                    <Binding Path="Nome" />
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
+                                    </Frame>
+                                </StackLayout>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
         </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+    </ContentPage>
+
+    <!--CADASTRO-->
+    <ContentPage Title="Cadastro">
+        <Grid>
+            <StackLayout VerticalOptions="Start" Padding="10">
+                <!--CADASTRO-->
+                <StackLayout VerticalOptions="Start" Padding="10">
+                    <Frame BorderColor="Black" CornerRadius="10">
+                        <ScrollView VerticalScrollBarVisibility="Always">
+                            <Grid>
+                                <!--CONFIG DO GRID-->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!--CODIGO-->
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       Text="Código"
+                                       TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="End"/>
+                                <Entry Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
+                                       x:Name="TxtCodigo"
+                                       IsEnabled="False"/>
+                                <!--INATIVO-->
+                                <Label Grid.Row="0" Grid.Column="3" 
+                                       Text="Inativo"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <CheckBox Grid.Row="0" Grid.Column="4" 
+                                          x:Name="ChkInativo"
+                                          IsTabStop="False"
+                                          Color="Black"/>
+                                <!--TIPO CLIENTE-->
+                                <Label Grid.Row="1" Grid.Column="0"
+                                       Text="Cliente" 
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <CheckBox Grid.Row="1" Grid.Column="1"
+                                          x:Name="ChkCliente" 
+                                          IsTabStop="False"
+                                          Color="Black"/>
+                                <!--TIPO FORNECEDOR-->
+                                <Label Grid.Row="1" Grid.Column="2"
+                                       Text="Fornec." 
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <CheckBox Grid.Row="1" Grid.Column="3"
+                                          x:Name="ChkFornecedor" 
+                                          IsTabStop="False"
+                                          Color="Black"/>
+                                <!--NOME-->
+                                <Label Grid.Row="2" Grid.Column="0" 
+                                       Text="Nome"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" 
+                                       x:Name="TxtNome" MaxLength="70"
+                                       ReturnType="Next" Keyboard="Default"/>
+                                <!--DATA NASCIMENTO-->
+                                <Label Grid.Row="3" Grid.Column="0"
+                                       Text="Dt Nasc"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <DatePicker Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                                            x:Name="PkrData" 
+                                            Format="dd/MM/yyyy" HorizontalOptions="Start" DateSelected="PkrData_DateSelected">
+                                </DatePicker>
+                                <!--DOCUMENTO-->
+                                <Label Grid.Row="4" Grid.Column="0" 
+                                       Text="Documento"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" 
+                                       x:Name="TxtDocumento"
+                                       ReturnType="Next" Keyboard="Numeric"
+                                       TextChanged="TxtDocumento_TextChanged">
+                                    <Entry.Behaviors>
+                                        <y:MaskedBehavior x:Name="MascaraDocumento" Mask="XXX.XXX.XXX-XX"/>
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <!--CEP-->
+                                <Label Grid.Row="5" Grid.Column="0"
+                                       Text="CEP"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
+                                       x:Name="TxtCep" MaxLength="50"
+                                       ReturnType="Done" Keyboard="Numeric" HorizontalTextAlignment="Center"
+                                       Completed="TxtCep_Completed">
+                                    <Entry.Behaviors>
+                                        <y:MaskedBehavior Mask="XXXXX-XXX" />
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <!--UF-->
+                                <Label Grid.Row="5" Grid.Column="3"
+                                       Text="UF"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Picker Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="1"
+                                        x:Name="PkrUf" Title="UF"
+                                        HorizontalTextAlignment="Center">
+                                </Picker>
+                                <!--CIDADE-->
+                                <Label Grid.Row="6" Grid.Column="0"
+                                       Text="Cidade"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="4"
+                                       x:Name="TxtCidade" MaxLength="50"
+                                       ReturnType="Next" Keyboard="Text" />
+                                <!--BAIRRO-->
+                                <Label Grid.Row="7" Grid.Column="0"
+                                       Text="Bairro"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="4"
+                                       x:Name="TxtBairro" MaxLength="30"
+                                       ReturnType="Next" Keyboard="Text"/>
+                                <!--ENDERECO-->
+                                <Label Grid.Row="8" Grid.Column="0"
+                                       Text="Endereço"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="4"
+                                       x:Name="TxtEndereco"
+                                       Keyboard="Text" ReturnType="Next" MaxLength="50"/>
+                                <!--NUMERO-->
+                                <Label Grid.Row="9" Grid.Column="0"
+                                       Text="Numero"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="1"
+                                       x:Name="TxtNumero"
+                                       Keyboard="Text" ReturnType="Next" MaxLength="4"
+                                       Unfocused="TxtNumero_Unfocused"/>
+                                <!--COMPLEMENTO-->
+                                <Label Grid.Row="10" Grid.Column="0"
+                                       Text="Compl."
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="4"
+                                       x:Name="TxtComplemento"
+                                       Keyboard="Text" ReturnType="Done" MaxLength="50"
+                                       Completed="BtnSalvar_Clicked"/>
+                            </Grid>
+                        </ScrollView>
+                    </Frame>
+                </StackLayout>
+
+                <!--BOTOES-->
+                <StackLayout VerticalOptions="End" Margin="0,0,0,40">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Button Grid.Row="0" Grid.Column="0"
+                                    x:Name="BtnNovo" Text="Novo"
+                                    Margin="10" BackgroundColor="LightPink"
+                                    Clicked="BtnNovo_Clicked"/>
+
+                        <Button Grid.Row="0" Grid.Column="1"
+                                    x:Name="BtnEditar" Text="Editar"
+                                    Margin="10" BackgroundColor="LightSteelBlue"
+                                    Clicked="BtnEditar_Clicked"/>
+
+                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                    x:Name="BtnSalvar" Text="Salvar"
+                                    Margin="40, 5" BackgroundColor="LightSeaGreen"
+                                    Clicked="BtnSalvar_Clicked"/>
+                    </Grid>
+                </StackLayout>
+            </StackLayout>
+
+            <BoxView x:Name="bvTelaPreta" 
+                     Color="Black" 
+                     Opacity="0.5" 
+                     IsVisible="false" />
+            <ActivityIndicator x:Name="actRoda" 
+                               Color="White" 
+                               IsVisible="false" 
+                               IsRunning="False" 
+                               Scale="0.2"/>
+        </Grid>
+    </ContentPage>
+</TabbedPage>

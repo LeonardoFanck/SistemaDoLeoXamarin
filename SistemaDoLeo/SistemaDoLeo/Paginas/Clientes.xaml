@@ -242,5 +242,6 @@
                                IsRunning="False" 
                                Scale="0.2"/>
         </Grid>
+
     </ContentPage>
 </TabbedPage>

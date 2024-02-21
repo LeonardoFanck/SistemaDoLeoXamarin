@@ -1,12 +1,392 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SistemaDoLeo.Paginas.Pedidos">
-    <ContentPage.Content>
+            xmlns:y="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="SistemaDoLeo.Paginas.Pedidos"
+            Title="Pedidos">
+    <ContentPage Title="Listagem">
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <!--BUSCA-->
+            <SearchBar x:Name="SrcBuscar" Placeholder="Digite para buscar pelo nome..." 
+                       Margin="10" BackgroundColor="White" TextColor="Black" PlaceholderColor="Black"
+                       TextChanged="SrcBuscar_TextChanged"/>
+            <!--REFRESH-->
+            <RefreshView x:Name="RefreshV"
+                         RefreshColor="Black"
+                         Refreshing="RefreshV_Refreshing">
+                <!--COLLECTION-->
+                <CollectionView x:Name="CvListagem"
+                                Margin="10" HorizontalOptions="CenterAndExpand" SelectionMode="Single"
+                                SelectionChanged="CvListagem_SelectionChanged" >
+                    <CollectionView.EmptyView>
+                        <Label Text="Nenhum registro localizado..." HorizontalTextAlignment="Center" FontSize="Body"/>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <SwipeView>
+                                <!--DELETAR-->
+                                <SwipeView.LeftItems>
+                                    <SwipeItem x:Name="SwDeletar" Text="Deletar"
+                                               BackgroundColor="Red"
+                                               Invoked="SwDeletar_Invoked"/>
+                                    </SwipeView.LeftItems>
+                                <!--ITEM DA LISTA-->
+                                <StackLayout Padding="3">
+                                    <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False" CornerRadius="6">
+                                        <StackLayout>
+                                            <Label TextColor="Black" FontAttributes="Bold" FontSize="Body" 
+                                                   VerticalOptions="Center" HorizontalOptions="Center" >
+                                                <Label.Text>
+                                                    <Binding Path="TipoOperacao" />
+                                                </Label.Text>
+                                            </Label>
+                                            <Label TextColor="Black" FontAttributes="Bold" FontSize="Body" 
+                                                   VerticalOptions="Center" HorizontalOptions="Center" >
+                                                <Label.Text>
+                                                    <Binding StringFormat="Pedido: {0}" Path="Id" />
+                                                </Label.Text>
+                                            </Label>
+                                            <Label TextColor="Black" FontAttributes="Bold" FontSize="Body" VerticalOptions="Center" 
+                                                   HorizontalOptions="Center">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="{} Cliente: {0} - {1}">
+                                                        <Binding Path="ClienteId" />
+                                                        <Binding Path="ClienteNome" />
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                        </StackLayout>
+                                    </Frame>
+                                </StackLayout>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
         </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+    </ContentPage>
+
+    <!--CADASTRO-->
+    <ContentPage Title="Cadastro">
+        <Grid>
+            <StackLayout VerticalOptions="Start" Padding="10">
+                <!--CADASTRO-->
+                <StackLayout VerticalOptions="Start" Padding="10">
+                    <Frame BorderColor="Black" CornerRadius="10">
+                        <ScrollView VerticalScrollBarVisibility="Always">
+                            <Grid>
+                                <!--CONFIG DO GRID-->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!--TIPO OPERACAO-->
+                                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                       Text="Operação:"
+                                       TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="End"/>
+                                <RadioButton Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2"
+                                             x:Name="RadioCompra" Content="Compra"
+                                             FontSize="Body"
+                                             CheckedChanged="RadioCompra_CheckedChanged"/>
+                                <RadioButton Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2"
+                                             x:Name="RadioVenda" Content="Venda"
+                                             FontSize="Body"/>
+                                <!--CODIGO-->
+                                <Label Grid.Row="1" Grid.Column="0"
+                                       Text="Código"
+                                       TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="End"/>
+                                <Entry Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                       x:Name="TxtCodigo"
+                                       IsEnabled="False"/>
+                                <!--DATA-->
+                                <Label Grid.Row="1" Grid.Column="3"
+                                       Text="Data"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <DatePicker Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2"
+                                            x:Name="PkrData" 
+                                            Format="dd/MM/yyyy" HorizontalOptions="Start" FontSize="Body"
+                                            DateSelected="PkrData_DateSelected">
+                                </DatePicker>
+                                <!--CLIENTE-->
+                                <StackLayout Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Label Grid.Row="0" Grid.Column="0"
+                                               x:Name="LblCliente" Text="Cliente"
+                                               TextColor="Black" VerticalOptions="Center" 
+                                               HorizontalOptions="End" FontAttributes="Bold"/>
+                                        <Entry  Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="5"
+                                                x:Name="TxtCliente"
+                                                MaxLength="50" FontSize="Body"
+                                                Placeholder="Selecione um Cliente" IsEnabled="False">
+                                        </Entry>
+                                    </Grid>
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer x:Name="TapCliente" Tapped="TapCliente_Tapped"/>
+                                    </StackLayout.GestureRecognizers>
+                                </StackLayout>
+                                <!--PGTO-->
+                                <StackLayout Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Label Grid.Row="0" Grid.Column="0"
+                                               Text="Pgto."
+                                               TextColor="Black" VerticalOptions="Center" 
+                                               HorizontalOptions="End" FontAttributes="Bold"/>
+                                        <Entry  Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="5"
+                                                x:Name="TxtPgto" 
+                                                MaxLength="50" FontSize="Body"
+                                                Placeholder="Selecione uma Forma de Pgto." IsEnabled="False">
+                                        </Entry>
+                                    </Grid>
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer x:Name="TapPgto" Tapped="TapPgto_Tapped"/>
+                                    </StackLayout.GestureRecognizers>
+                                </StackLayout>
+
+                                <!--VALOR-->
+                                <Label Grid.Row="6" Grid.Column="0"
+                                       Text="Valor"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"
+                                       x:Name="TxtValor" MaxLength="50"
+                                       ReturnType="Done" Keyboard="Numeric" HorizontalTextAlignment="Center"
+                                       Unfocused="TxtValor_Unfocused">
+                                </Entry>
+                                <!--DESCONTO-->
+                                <Label Grid.Row="6" Grid.Column="3"
+                                       Text="Desc"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="6" Grid.Column="4" Grid.ColumnSpan="2"
+                                       x:Name="TxtDesconto" MaxLength="50"
+                                       ReturnType="Done" Keyboard="Numeric" HorizontalTextAlignment="Center"
+                                       Unfocused="TxtDesconto_Unfocused">
+                                </Entry>
+                                <!--TOTAL-->
+                                <Label Grid.Row="7" Grid.Column="0"
+                                       Text="Total"
+                                       TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="5"
+                                       x:Name="TxtTotal" MaxLength="50"
+                                       ReturnType="Done" Keyboard="Numeric" HorizontalTextAlignment="Center"
+                                       IsEnabled="False">
+                                </Entry>
+                                
+                                <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="6" 
+                                        x:Name="BtnProdutos" Text="Produtos" 
+                                        BackgroundColor="Transparent" TextColor="Black" FontAttributes="Italic"
+                                        Clicked="BtnProdutos_Clicked"/>
+                            </Grid>
+                        </ScrollView>
+                    </Frame>
+                </StackLayout>
+
+                <!--PRODUTOS-->
+                <StackLayout x:Name="StackLayoutProdutos">
+                    <Frame BorderColor="Black" Padding="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                   Text="Produto"
+                                   TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="StartAndExpand" FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"/>
+
+                            <Label Grid.Row="0" Grid.Column="3" Grid.RowSpan="1"
+                                   Text="Valor"
+                                   TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="Center" FontAttributes="Bold"/>
+
+                            <Label Grid.Row="0" Grid.Column="4" Grid.RowSpan="1"
+                                   Text="Quant"
+                                   TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="Center" FontAttributes="Bold"/>
+
+                            <Label Grid.Row="0" Grid.Column="5" Grid.RowSpan="1"
+                                   Text="Desc"
+                                   TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="Center" FontAttributes="Bold"/>
+
+                            <Label Grid.Row="0" Grid.Column="6" Grid.RowSpan="1"
+                                   Text="Total"
+                                   TextColor="Black" FontSize="17" VerticalOptions="Center" HorizontalOptions="Center" FontAttributes="Bold"/>
+                        </Grid>
+                    </Frame>
+
+                    <CollectionView ItemsLayout="VerticalList"
+                                    SelectionMode="None"
+                                    x:Name="CollectionProdutos">
+
+                        <CollectionView.EmptyView>
+                            <StackLayout Padding="10">
+                                <Label HorizontalOptions="Center" Text="Nenhum Item localizado" FontSize="Body"/>
+                            </StackLayout>
+                        </CollectionView.EmptyView>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <SwipeView>
+                                    <SwipeView.RightItems>
+                                        <SwipeItem x:Name="SwDeleteProduto" Text="Deletar"
+                                                   BackgroundColor="Red"
+                                                   Invoked="SwDeleteProduto_Invoked"/>
+                                    </SwipeView.RightItems>
+                                    <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False">
+                                        <StackLayout>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto"/>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                                        Text="{Binding Nome}"
+                                                        HorizontalTextAlignment="Start"
+                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                                <Label Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1"
+                                                        Text="{Binding Valor}"
+                                                        HorizontalTextAlignment="Start"
+                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                                <Label Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1"
+                                                        Text="{Binding Quantidade}"
+                                                        HorizontalTextAlignment="Start"
+                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                                <Label Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="1"
+                                                        Text="{Binding Desconto}"
+                                                        HorizontalTextAlignment="Start"
+                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                                <Label Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="1"
+                                                        Text="{Binding Total}"
+                                                        HorizontalTextAlignment="Start"
+                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                            </Grid>
+                                        </StackLayout>
+                                    </Frame>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Grid Margin="0,0,0,20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button Grid.Row="0" Grid.Column="0"
+                                x:Name="BtnAddProduto" Text="Adicionar Produto" 
+                                BackgroundColor="Transparent" TextColor="Green" FontSize="Small"
+                                Clicked="BtnAddProduto_Clicked"/>
+                        <Button Grid.Row="0" Grid.Column="1"
+                                x:Name="BtnEditProduto" Text="Editar Produto" 
+                                BackgroundColor="Transparent" TextColor="Gray" FontSize="Small"
+                                Clicked="BtnEditProduto_Clicked"/>
+                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                x:Name="BtnFecharProdutos" Text="Fechar Produtos" 
+                                BackgroundColor="Transparent" FontSize="Small" 
+                                Clicked="BtnFecharProdutos_Clicked" />
+                    </Grid>
+
+                </StackLayout>
+
+                <!--BOTOES-->
+                <StackLayout x:Name="StackLayoutBotoes"
+                             VerticalOptions="End" Margin="0,0,0,40">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Button Grid.Row="0" Grid.Column="0"
+                                x:Name="BtnNovo" Text="Novo"
+                                Margin="10" BackgroundColor="LightPink"
+                                Clicked="BtnNovo_Clicked"/>
+
+                        <Button Grid.Row="0" Grid.Column="1"
+                                x:Name="BtnEditar" Text="Editar"
+                                Margin="10" BackgroundColor="LightSteelBlue"
+                                Clicked="BtnEditar_Clicked"/>
+
+                        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                x:Name="BtnSalvar" Text="Salvar"
+                                Margin="40, 5" BackgroundColor="LightSeaGreen"
+                                Clicked="BtnSalvar_Clicked"/>
+                    </Grid>
+                </StackLayout>
+            </StackLayout>
+
+            <BoxView x:Name="bvTelaPreta" 
+                     Color="Black" 
+                     Opacity="0.5" 
+                     IsVisible="false" />
+
+            <ActivityIndicator x:Name="actRoda" 
+                               Color="White" 
+                               IsVisible="false" 
+                               IsRunning="False" 
+                               Scale="0.2"/>
+        </Grid>
+    </ContentPage>
+</TabbedPage>

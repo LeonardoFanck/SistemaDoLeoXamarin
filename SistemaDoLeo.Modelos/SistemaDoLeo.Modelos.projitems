@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Operador.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\OperadorTela.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Pedido.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\PedidoDetalhado.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\PedidoItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Produto.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\ProximoRegistro.cs" />

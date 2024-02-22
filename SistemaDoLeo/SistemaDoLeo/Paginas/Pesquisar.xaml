@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SistemaDoLeo.Paginas.Pesquisar"
+             Title="Pesquisa">
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical">
+            <SearchBar x:Name="SrcBuscar" Placeholder="Digite para buscar pelo nome..." 
+                       Margin="10" BackgroundColor="White" TextColor="Black" PlaceholderColor="Black"
+                       TextChanged="SrcBuscar_TextChanged"/>
+            
+            <RefreshView x:Name="RefreshListagem" 
+                         RefreshColor="Black" 
+                         Refreshing="RefreshListagem_Refreshing">
+                <CollectionView x:Name="Listagem" 
+                                Margin="10" HorizontalOptions="CenterAndExpand" SelectionMode="Single"
+                                SelectionChanged="Listagem_SelectionChanged">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Padding="3">
+                                <Frame BorderColor="Black">
+                                    <Label TextColor="Black" FontAttributes="Bold" FontSize="Body" VerticalOptions="Center" HorizontalOptions="Center" >
+                                        <Label.Text>
+                                            <MultiBinding StringFormat="{}{0}   -   {1}">
+                                                <Binding Path="Id" />
+                                                <Binding Path="Nome" />
+                                            </MultiBinding>
+                                        </Label.Text>
+                                    </Label>
+                                </Frame>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+
+            <StackLayout Padding="20" Margin="0,0,0,20">
+                <Button x:Name="BtnConfirmar" Text="Confirmar" 
+                        TextColor="Black" BackgroundColor="LightGreen" Opacity="0.8"
+                        Clicked="BtnConfirmar_Clicked"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

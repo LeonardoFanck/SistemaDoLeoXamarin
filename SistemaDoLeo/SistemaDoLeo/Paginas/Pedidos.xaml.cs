@@ -228,7 +228,7 @@ namespace SistemaDoLeo.Paginas
                 TxtTotal.IsEnabled = false;
 
                 BtnEditar.IsEnabled = false;
-                BtnNovo.IsEnabled = false;
+                BtnNovo.IsEnabled = true;
                 BtnSalvar.IsEnabled = true;
 
             }
@@ -558,9 +558,9 @@ namespace SistemaDoLeo.Paginas
             else
             {
                 TxtValor.Text = 0.00.ToString("C2");
-
-                return;
             }
+
+            await RecalcularValores();
         }
 
         private async void TxtDesconto_Unfocused(object sender, FocusEventArgs e)
@@ -591,9 +591,9 @@ namespace SistemaDoLeo.Paginas
             else
             {
                 TxtDesconto.Text = 0.00.ToString("F2") + "%";
-
-                return;
             }
+
+            await RecalcularValores();
         }
 
         private async void TxtTotal_Unfocused(object sender, FocusEventArgs e)
@@ -657,9 +657,22 @@ namespace SistemaDoLeo.Paginas
 
         }
 
-        private void BtnAddProduto_Clicked(object sender, EventArgs e)
+        private async void BtnAddProduto_Clicked(object sender, EventArgs e)
         {
+            await Navigation.PushAsync(new Pesquisar(this, Pesquisar.TiposPesquisas.Produtos));
+        }
 
+        public AddProdutos.TipoOperacao GetTipoOperacao()
+        {
+            if (operacao.Equals("Venda"))
+            {
+                return AddProdutos.TipoOperacao.venda;
+            }
+            else
+            {
+                return AddProdutos.TipoOperacao.compra;
+
+            }
         }
 
         private Task AbrirProdutos(bool abrir)
@@ -700,6 +713,16 @@ namespace SistemaDoLeo.Paginas
         private async Task<string> LimpaValores(string valor)
         {
             return regex.Replace(valor, "");
+        }
+
+        private async Task RecalcularValores()
+        {
+            var valor = Convert.ToDecimal(await LimpaValores(TxtValor.Text));
+            var desconto = Convert.ToDecimal(await LimpaValores(TxtDesconto.Text));
+
+            var total = valor - (valor * (desconto *  Convert.ToDecimal(0.01)));
+
+            TxtTotal.Text = total.ToString("C2");
         }
     }
 }

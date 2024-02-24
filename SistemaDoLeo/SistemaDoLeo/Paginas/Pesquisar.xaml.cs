@@ -20,7 +20,8 @@ namespace SistemaDoLeo.Paginas
 		public enum TiposPesquisas
 		{
 			Clientes,
-			FormasPgto
+			FormasPgto,
+			Produtos
 		}
 
 		private object tela;
@@ -29,13 +30,16 @@ namespace SistemaDoLeo.Paginas
 		HttpClient _client;
 
 		private string url = $"{Links.ip}";
+		private string urlBase = $"{Links.ip}";
 		private readonly string urlCliente = "/Cliente";
 		private readonly string urlPgto = "/FormaPgto";
+		private readonly string urlProduto = "/Produto";
 
 		private string Titulo = "Pesquisa";
 
 		private List<Cliente> ListaCliente = new List<Cliente>();
 		private List<FormaPgto> ListaPgto = new List<FormaPgto>();
+		private List<Produto> ListaProduto = new List<Produto>();
 
 		public Pesquisar (object tela, TiposPesquisas tipo)
 		{
@@ -59,7 +63,7 @@ namespace SistemaDoLeo.Paginas
 		{
 			if(tipo == TiposPesquisas.Clientes)
 			{
-				url += urlCliente;
+				url = urlBase + urlCliente;
 
 				this.Title += " Clientes/Fornecedor";
 
@@ -67,11 +71,19 @@ namespace SistemaDoLeo.Paginas
 			}
 			else if(tipo == TiposPesquisas.FormasPgto)
 			{
-                url += urlPgto;
+                url = urlBase + urlPgto;
 
                 this.Title += " Forma de Pagamento";
 
                 await ListarFormaPgto();
+            }
+			else if(tipo == TiposPesquisas.Produtos)
+			{
+                url = urlBase + urlProduto;
+
+                this.Title += " Produto";
+
+                await ListarProdutos();
             }
 		}
 
@@ -91,6 +103,14 @@ namespace SistemaDoLeo.Paginas
             Listagem.ItemsSource = ListaPgto.Where(l => l.Inativo == false);
         }
 
+        private async Task ListarProdutos()
+        {
+            var json = await _client.GetStringAsync(url);
+            ListaProduto = JsonConvert.DeserializeObject<List<Produto>>(json);
+            SrcBuscar.Text = string.Empty;
+            Listagem.ItemsSource = ListaProduto.Where(l => l.Inativo == false);
+        }
+
         private async void RefreshListagem_Refreshing(object sender, EventArgs e)
         {
             if (tipo == TiposPesquisas.Clientes)
@@ -100,6 +120,10 @@ namespace SistemaDoLeo.Paginas
             else if (tipo == TiposPesquisas.FormasPgto)
             {
 				await ListarFormaPgto();
+            }
+            else if (tipo == TiposPesquisas.Produtos)
+            {
+				await ListarProdutos();
             }
         }
 
@@ -117,6 +141,10 @@ namespace SistemaDoLeo.Paginas
             else if (tipo == TiposPesquisas.FormasPgto)
 			{
                 Listagem.ItemsSource = ListaPgto.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower()));
+            }
+            else if (tipo == TiposPesquisas.Produtos)
+			{
+                Listagem.ItemsSource = ListaProduto.Where(l => l.Nome.ToLower().Contains(SrcBuscar.Text.ToLower()));
             }
         }
 
@@ -148,6 +176,18 @@ namespace SistemaDoLeo.Paginas
 					var pedido = tela as Pedidos;
 					pedido.AtualizaFormaPgto(pgto.Id);
 				}
+            }
+            else if (tipo == TiposPesquisas.Produtos)
+            {
+				if(tela is Pedidos)
+				{
+					var prod = Listagem.SelectedItem as Produto;
+					var pedido = tela as Pedidos;
+
+					await Navigation.PushAsync(new AddProdutos(pedido, prod, pedido.GetTipoOperacao()));
+				}
+
+				return;
             }
 			
 			await Navigation.PopAsync();

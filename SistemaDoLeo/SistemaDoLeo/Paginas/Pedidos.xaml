@@ -184,7 +184,7 @@
                                        TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
                                 <Entry Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"
                                        x:Name="TxtValor" MaxLength="50"
-                                       ReturnType="Done" Keyboard="Numeric" HorizontalTextAlignment="Center"
+                                       ReturnType="Next" Keyboard="Numeric" HorizontalTextAlignment="Center"
                                        Unfocused="TxtValor_Unfocused">
                                 </Entry>
                                 <!--DESCONTO-->

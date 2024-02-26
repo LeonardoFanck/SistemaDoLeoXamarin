@@ -184,7 +184,7 @@ namespace SistemaDoLeo.Paginas
 					var prod = Listagem.SelectedItem as Produto;
 					var pedido = tela as Pedidos;
 
-					await Navigation.PushAsync(new AddProdutos(pedido, prod, pedido.GetTipoOperacao()));
+					await Navigation.PushAsync(new AddProdutos(pedido, prod, pedido.GetPedido()));
 				}
 
 				return;

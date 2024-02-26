@@ -1,7 +1,11 @@
-﻿using SistemaDoLeo.Modelos.Classes;
+﻿using Newtonsoft.Json;
+using SistemaDoLeo.DB;
+using SistemaDoLeo.Modelos.Classes;
+using SistemaDoLeo.Toast;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -20,10 +24,17 @@ namespace SistemaDoLeo.Paginas
             venda
         }
 
+        private HttpClient _client;
+
+        private PedidoDetalhado pedido;
         private TipoOperacao tipoOperacao;
         private object tela;
         private Produto produto; 
         private PedidoItemDetalhado item;
+
+        private string url = $"{Links.ip}/PedidoItem";
+
+        private string Titulo = "Produto do Pedido";
 
         Regex regex = new Regex("[^0-9.,]");
 
@@ -32,7 +43,7 @@ namespace SistemaDoLeo.Paginas
         private int editar = 1;
 
         // UTILIZADO PARA ADICIONAR UM NOVO PRODUTO
-        public AddProdutos(object tela, Produto produto, TipoOperacao tipoOperacao)
+        public AddProdutos(object tela, Produto produto, PedidoDetalhado pedido)
         {
             InitializeComponent();
 
@@ -40,11 +51,12 @@ namespace SistemaDoLeo.Paginas
 
             this.tela = tela;
             this.produto = produto;
-            this.tipoOperacao = tipoOperacao;
+            this.pedido = pedido;
+
         }
 
         // UTILIZADO PARA ALTERAR UM ITEM
-        public AddProdutos(object tela, PedidoItemDetalhado item, TipoOperacao tipoOperacao)
+        public AddProdutos(object tela, PedidoItemDetalhado item, PedidoDetalhado pedido)
         {
             InitializeComponent();
 
@@ -52,14 +64,31 @@ namespace SistemaDoLeo.Paginas
 
             this.tela = tela;
             this.item = item;
-            this.tipoOperacao = tipoOperacao;
+            this.pedido = pedido;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            await PreencheProduto();
+            HttpClientHandler httpClientHandler = PermissaoDeCertificado.GetInsecureHandler();
+            _client = new HttpClient(httpClientHandler);
+
+            await ValidaTipoOperacao();
+
+            await PreencheProduto();   
+        }
+
+        private async Task ValidaTipoOperacao()
+        {
+            if (pedido.TipoOperacao.Equals("Venda"))
+            {
+                tipoOperacao = TipoOperacao.venda;
+            }
+            else
+            {
+                tipoOperacao = TipoOperacao.compra;
+            }
         }
 
         private async Task PreencheProduto()
@@ -167,6 +196,109 @@ namespace SistemaDoLeo.Paginas
             }
 
             await CalcularValor();
+        }
+
+        private async void BtnConfirmar_Clicked(object sender, EventArgs e)
+        {
+            PedidoItem item = new PedidoItem();
+
+            if(status == novo)
+            {
+                item = new PedidoItem()
+                {
+                    PedidoId = pedido.Id,
+                    ProdutoId = Convert.ToInt32(TxtCodigo.Text),
+                    Valor = Convert.ToDecimal(await LimpaValores(TxtValor.Text)),
+                    Quantidade = Convert.ToInt32(TxtQuantidade.Text),
+                    Desconto = Convert.ToDecimal(await LimpaValores(TxtDesconto.Text)),
+                    Total = Convert.ToDecimal(await LimpaValores(TxtTotal.Text)),
+                };
+            }
+            else if(status == editar)
+            {
+                item = new PedidoItem()
+                {
+                    Id = this.item.Id,
+                    PedidoId = pedido.Id,
+                    ProdutoId = Convert.ToInt32(TxtCodigo.Text),
+                    Valor = Convert.ToDecimal(await LimpaValores(TxtValor.Text)),
+                    Quantidade = Convert.ToInt32(TxtQuantidade.Text),
+                    Desconto = Convert.ToDecimal(await LimpaValores(TxtDesconto.Text)),
+                    Total = Convert.ToDecimal(await LimpaValores(TxtTotal.Text)),
+                };
+            }
+
+            await SalvarItem(item);
+
+            await Navigation.PopAsync();
+        }
+
+        private async Task SalvarItem(PedidoItem item)
+        {
+            var json = JsonConvert.SerializeObject(item);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            if (status == novo)
+            {
+                var response = await _client.PostAsync(url, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    new ToastBase(Titulo, "Ocorreu um erro ao adicionar o item", $"Ocorreu um erro ao adicionar o item, favor tente novamente" +
+                        $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+                }
+
+                var novoItem = JsonConvert.DeserializeObject<PedidoItem>(response.Content.ToString());
+
+                var novoItemDetalhado = new PedidoItemDetalhado()
+                {
+                    Id = novoItem.Id,
+                    PedidoId = novoItem.PedidoId,
+                    ProdutoId = novoItem.ProdutoId,
+                    ProdutoNome = TxtNome.Text,
+                    Valor = novoItem.Valor,
+                    Quantidade = novoItem.Quantidade,
+                    Desconto = novoItem.Desconto,
+                    Total = novoItem.Total
+                };
+
+                if (tela is Pedidos)
+                {
+                    var tela = this.tela as Pedidos;
+                    tela.
+                }
+            }
+            else if (status == editar)
+            {
+                var response = await _client.PutAsync(url, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    new ToastBase(Titulo, "Ocorreu um erro ao alterar o item", $"Ocorreu um erro ao alterar o item, favor tente novamente" +
+                        $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+                }
+
+                var novoItem = JsonConvert.DeserializeObject<PedidoItem>(response.Content.ToString());
+
+                var novoItemDetalhado = new PedidoItemDetalhado()
+                {
+                    Id = novoItem.Id,
+                    PedidoId = novoItem.PedidoId,
+                    ProdutoId = novoItem.ProdutoId,
+                    ProdutoNome = TxtNome.Text,
+                    Valor = novoItem.Valor,
+                    Quantidade = novoItem.Quantidade,
+                    Desconto = novoItem.Desconto,
+                    Total = novoItem.Total
+                };
+
+                if (tela is Pedidos)
+                {
+                    var tela = this.tela as Pedidos;
+                    tela.
+                }
+
+            }
         }
     }
 }

@@ -662,17 +662,9 @@ namespace SistemaDoLeo.Paginas
             await Navigation.PushAsync(new Pesquisar(this, Pesquisar.TiposPesquisas.Produtos));
         }
 
-        public AddProdutos.TipoOperacao GetTipoOperacao()
+        public PedidoDetalhado GetPedido()
         {
-            if (operacao.Equals("Venda"))
-            {
-                return AddProdutos.TipoOperacao.venda;
-            }
-            else
-            {
-                return AddProdutos.TipoOperacao.compra;
-
-            }
+            return listaPedidos.FirstOrDefault(l => l.Id == Convert.ToInt32(TxtCodigo.Text));
         }
 
         private Task AbrirProdutos(bool abrir)

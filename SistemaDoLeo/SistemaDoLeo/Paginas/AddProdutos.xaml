@@ -81,7 +81,9 @@
             </StackLayout>
 
             <StackLayout Margin="20">
-                <Button Text="Confirmar" /> 
+                <Button x:Name="BtnConfirmar" Text="Confirmar" 
+                        TextColor="Black" BackgroundColor="LightGreen" Opacity="0.8"
+                        Clicked="BtnConfirmar_Clicked"/>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

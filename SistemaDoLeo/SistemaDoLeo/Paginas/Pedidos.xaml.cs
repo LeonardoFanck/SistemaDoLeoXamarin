@@ -31,17 +31,22 @@ namespace SistemaDoLeo.Paginas
         private string Titulo = "Pedidos";
 
         private List<PedidoDetalhado> listaPedidos = new List<PedidoDetalhado>();
+        private List<PedidoItemDetalhado> listaItens = new List<PedidoItemDetalhado>();
+        private List<Produto> listaProdutos = new List<Produto>();
         private List<Cliente> listaClientes = new List<Cliente>();
         private List<FormaPgto> listaPgtos = new List<FormaPgto>();
         private ProximoRegistro proximoRegistro;
 
         private Cliente clienteAtual;
         private FormaPgto pgtoAtual;
+        private PedidoDetalhado pedidoAtual;
 
         private readonly HttpClient _client;
         private string url = $"{Links.ip}/Pedido";
         private string urlCliente = $"{Links.ip}/Cliente";
         private string urlPgto = $"{Links.ip}/FormaPgto";
+        private string urlItens = $"{Links.ip}/PedidoItems";
+        private string urlProdutos = $"{Links.ip}/Produto";
 
         public Pedidos()
         {
@@ -63,6 +68,8 @@ namespace SistemaDoLeo.Paginas
 
             await CarregaListaPedidos();
 
+            await CarregaListaProdutos();
+
             await ValidarOperacao();
         }
 
@@ -74,11 +81,11 @@ namespace SistemaDoLeo.Paginas
             await CarregaListaPgto();
 
             var json = await _client.GetStringAsync(url);
-            var teste = JsonConvert.DeserializeObject<List<Pedido>>(json);
+            var pedidios = JsonConvert.DeserializeObject<List<Pedido>>(json);
 
             listaPedidos.Clear();
 
-            foreach(var pedido in teste)
+            foreach(var pedido in pedidios)
             {
                 listaPedidos.Add(new PedidoDetalhado()
                 {
@@ -98,6 +105,45 @@ namespace SistemaDoLeo.Paginas
             CvListagem.ItemsSource = listaPedidos;
 
             RefreshV.IsRefreshing = false;
+        }
+
+        private async Task CarregaListaItens()
+        {
+            RefreshItens.IsRefreshing = true;
+
+            await CarregaListaProdutos();
+
+            var json = await _client.GetStringAsync($"{urlItens}/Pedido/{TxtCodigo.Text}");
+            var itens = JsonConvert.DeserializeObject<List<PedidoItem>>(json);
+
+            listaItens.Clear();
+
+            foreach (var item in itens)
+            {
+                listaItens.Add(new PedidoItemDetalhado()
+                {
+                    Id = item.Id,
+                    PedidoId = item.PedidoId,
+                    ProdutoId = item.ProdutoId,
+                    ProdutoNome = listaProdutos.FirstOrDefault(l => l.Id == item.ProdutoId).Nome,
+                    Valor = item.Valor,
+                    Quantidade = item.Quantidade,
+                    Desconto = item.Desconto,
+                    Total = item.Total
+                });
+            }
+
+            CollectionItens.ItemsSource = null;
+
+            CollectionItens.ItemsSource = listaItens;
+
+            RefreshItens.IsRefreshing = false;
+        }
+
+        private async Task CarregaListaProdutos()
+        {
+            var json = await _client.GetStringAsync(urlProdutos);
+            listaProdutos = JsonConvert.DeserializeObject<List<Produto>>(json);
         }
 
         private async Task CarregaListaClientes()
@@ -152,6 +198,8 @@ namespace SistemaDoLeo.Paginas
 
             if (selecionado != null)
             {
+                pedidoAtual = selecionado;
+
                 await AbrirProdutos(false);
 
                 if (selecionado.TipoOperacao.Equals("Venda"))
@@ -171,6 +219,8 @@ namespace SistemaDoLeo.Paginas
                 TxtTotal.Text = selecionado.Total.ToString("C2");
 
                 await validaStatus(Visualizar);
+
+                await CarregaListaItens();
 
                 // limpa o selecionado para poder selecionar o mesmo novamente
                 CvListagem.SelectedItem = null;
@@ -642,9 +692,47 @@ namespace SistemaDoLeo.Paginas
             await ValidarOperacao();
         }
 
-        private void SwDeleteProduto_Invoked(object sender, EventArgs e)
+        private async void SwDeleteProduto_Invoked(object sender, EventArgs e)
         {
+            var selecionado = (sender as SwipeItem)?.BindingContext as PedidoItemDetalhado;
 
+            if (selecionado == null)
+            {
+                await DisplayAlert(Titulo, "Nenhum item selecionado", "Ok");
+
+                return;
+            }
+
+            var confirmacao = await DisplayAlert(Titulo, $"Deseja realmente fazer a exclusão do item:\n" +
+                $"Código: {selecionado.ProdutoId}\n" +
+                $"Nome: {selecionado.ProdutoNome}?", "Confirmar", "Cancelar");
+
+            if (!confirmacao)
+            {
+                return;
+            }
+
+            var response = await _client.DeleteAsync($"{urlItens}/{selecionado.Id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                new ToastBase(Titulo, "Ocorreu um erro ao deletar", $"Ocorreu um erro ao tentar deletar o item, tente novamente!\n" +
+                    $"Código: {TxtCodigo.Text}\n" +
+                    $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
+            listaItens.Remove(selecionado);
+
+            await RecalcularPedido();
+
+            CollectionItens.SelectedItem = null;
+
+            CollectionItens.ItemsSource = new List<PedidoItemDetalhado>(listaItens);
+            
+            new ToastBase(Titulo, "Item deletado com sucesso", $"Item: {selecionado.ProdutoId} - {selecionado.ProdutoNome} deletado com sucesso!" +
+                $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
         }
 
         private async void BtnFecharProdutos_Clicked(object sender, EventArgs e)
@@ -654,7 +742,17 @@ namespace SistemaDoLeo.Paginas
 
         private void BtnEditProduto_Clicked(object sender, EventArgs e)
         {
+            if(CollectionItens.SelectedItem == null)
+            {
+                new ToastBase(Titulo, "Necessário selecionar um item", $"Nenhum item selecionado para estar realizando a edição!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
 
+                return;
+            }
+
+            var item = CollectionItens.SelectedItem as PedidoItemDetalhado;
+
+            Navigation.PushAsync(new AddProdutos(this, item, pedidoAtual));
         }
 
         private async void BtnAddProduto_Clicked(object sender, EventArgs e)
@@ -665,6 +763,66 @@ namespace SistemaDoLeo.Paginas
         public PedidoDetalhado GetPedido()
         {
             return listaPedidos.FirstOrDefault(l => l.Id == Convert.ToInt32(TxtCodigo.Text));
+        }
+
+        public async void AddListaItens(PedidoItemDetalhado item)
+        {
+            var itemExiste = listaItens.FirstOrDefault(l => l.Id == item.Id);
+
+            if(itemExiste != null)
+            {
+                var index = listaItens.IndexOf(itemExiste);
+                listaItens.Remove(itemExiste);
+                
+                listaItens.Insert(index, item);
+            }
+            else
+            {
+                listaItens.Add(item);
+            }
+
+            await RecalcularPedido();
+
+            CollectionItens.ItemsSource = null;
+
+            CollectionItens.ItemsSource = listaItens;
+        }
+
+        private async Task RecalcularPedido()
+        {
+            var valor = listaItens.Sum(l => l.Total);
+
+            TxtValor.Text = valor.ToString("C2");
+
+            await RecalcularValores();
+
+            await AtualizarPedido();
+        }
+
+        private async Task AtualizarPedido()
+        {
+            Pedido pedido = new Pedido();
+
+            var valor = Convert.ToDecimal(await LimpaValores(TxtValor.Text));
+            var desconto = Convert.ToDecimal(await LimpaValores(TxtDesconto.Text));
+            var total = Convert.ToDecimal(await LimpaValores(TxtTotal.Text));
+
+            pedido = new Pedido
+            {
+                Id = Convert.ToInt32(TxtCodigo.Text),
+                ClienteId = clienteAtual.Id,
+                FormaPgtoId = pgtoAtual.Id,
+                TipoOperacao = operacao,
+                Data = PkrData.Date,
+                Valor = valor,
+                Desconto = desconto,
+                Total = total
+            };
+
+            if (await SalvarRegistro(pedido))
+            {
+                await validaStatus(Visualizar);
+            }
         }
 
         private Task AbrirProdutos(bool abrir)
@@ -687,6 +845,14 @@ namespace SistemaDoLeo.Paginas
 
         private async void BtnProdutos_Clicked(object sender, EventArgs e)
         {
+            if(Status == Cadastro)
+            {
+                new ToastBase(Titulo, "Necessário finalizar o cadastro", $"Necessário finalizar o cadastro do pedido para estar" +
+                    $"incluindo os itens!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
             await AbrirProdutos(true);
         }
 
@@ -715,6 +881,11 @@ namespace SistemaDoLeo.Paginas
             var total = valor - (valor * (desconto *  Convert.ToDecimal(0.01)));
 
             TxtTotal.Text = total.ToString("C2");
+        }
+
+        private async void RefreshItens_Refreshing(object sender, EventArgs e)
+        {
+            await CarregaListaItens();
         }
     }
 }

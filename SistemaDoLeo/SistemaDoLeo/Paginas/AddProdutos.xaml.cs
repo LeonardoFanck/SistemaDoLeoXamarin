@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SistemaDoLeo.Paginas
 {
@@ -32,7 +33,7 @@ namespace SistemaDoLeo.Paginas
         private Produto produto; 
         private PedidoItemDetalhado item;
 
-        private string url = $"{Links.ip}/PedidoItem";
+        private string url = $"{Links.ip}/PedidoItems";
 
         private string Titulo = "Produto do Pedido";
 
@@ -47,6 +48,8 @@ namespace SistemaDoLeo.Paginas
         {
             InitializeComponent();
 
+            Title = "Adicionar produto";
+
             status = novo;
 
             this.tela = tela;
@@ -59,6 +62,8 @@ namespace SistemaDoLeo.Paginas
         public AddProdutos(object tela, PedidoItemDetalhado item, PedidoDetalhado pedido)
         {
             InitializeComponent();
+
+            Title = "Editar produto";
 
             status = editar;
 
@@ -113,8 +118,8 @@ namespace SistemaDoLeo.Paginas
                 TxtCodigo.Text = item.ProdutoId.ToString();
                 TxtNome.Text = item.ProdutoNome;
                 TxtValor.Text = item.Valor.ToString("C2");
-                TxtQuantidade.Text = item.Quantidade.ToString("F2") + "%";
-                TxtDesconto.Text = item.Desconto.ToString();
+                TxtQuantidade.Text = item.Quantidade.ToString();
+                TxtDesconto.Text = item.Desconto.ToString("F2") + "%";
             }
 
             await CalcularValor();
@@ -158,6 +163,31 @@ namespace SistemaDoLeo.Paginas
             else
             {
                 TxtValor.Text = 0.00.ToString("C2");
+            }
+
+            await CalcularValor();
+        }
+
+        private async void TxtQuantidade_Unfocused(object sender, FocusEventArgs e)
+        {
+            if (TxtQuantidade.Text is null || TxtQuantidade.Text == "")
+            {
+                TxtQuantidade.Text = (1).ToString();
+
+                await CalcularValor();
+
+                return;
+            }
+
+            var quantidade = await LimpaValores(TxtQuantidade.Text);
+
+            if(quantidade != "")
+            {
+                TxtQuantidade.Text = quantidade.ToString();
+            }
+            else
+            {
+                TxtQuantidade.Text = (1).ToString();
             }
 
             await CalcularValor();
@@ -228,15 +258,18 @@ namespace SistemaDoLeo.Paginas
                 };
             }
 
-            await SalvarItem(item);
-
-            await Navigation.PopAsync();
+            if(await SalvarItem(item))
+            {
+                await Navigation.PopAsync();
+            }
         }
 
-        private async Task SalvarItem(PedidoItem item)
+        private async Task<bool> SalvarItem(PedidoItem item)
         {
             var json = JsonConvert.SerializeObject(item);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            PedidoItemDetalhado novoItemDetalhado = new PedidoItemDetalhado();
 
             if (status == novo)
             {
@@ -246,11 +279,13 @@ namespace SistemaDoLeo.Paginas
                 {
                     new ToastBase(Titulo, "Ocorreu um erro ao adicionar o item", $"Ocorreu um erro ao adicionar o item, favor tente novamente" +
                         $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                    return false;
                 }
 
-                var novoItem = JsonConvert.DeserializeObject<PedidoItem>(response.Content.ToString());
+                var novoItem = JsonConvert.DeserializeObject<PedidoItem>(await response.Content.ReadAsStringAsync());
 
-                var novoItemDetalhado = new PedidoItemDetalhado()
+                novoItemDetalhado = new PedidoItemDetalhado()
                 {
                     Id = novoItem.Id,
                     PedidoId = novoItem.PedidoId,
@@ -261,44 +296,39 @@ namespace SistemaDoLeo.Paginas
                     Desconto = novoItem.Desconto,
                     Total = novoItem.Total
                 };
-
-                if (tela is Pedidos)
-                {
-                    var tela = this.tela as Pedidos;
-                    tela.
-                }
             }
             else if (status == editar)
             {
-                var response = await _client.PutAsync(url, content);
+                var response = await _client.PutAsync($"{url}/{item.Id}", content);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     new ToastBase(Titulo, "Ocorreu um erro ao alterar o item", $"Ocorreu um erro ao alterar o item, favor tente novamente" +
                         $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                    return false;
                 }
 
-                var novoItem = JsonConvert.DeserializeObject<PedidoItem>(response.Content.ToString());
-
-                var novoItemDetalhado = new PedidoItemDetalhado()
+                novoItemDetalhado = new PedidoItemDetalhado()
                 {
-                    Id = novoItem.Id,
-                    PedidoId = novoItem.PedidoId,
-                    ProdutoId = novoItem.ProdutoId,
+                    Id = item.Id,
+                    PedidoId = item.PedidoId,
+                    ProdutoId = item.ProdutoId,
                     ProdutoNome = TxtNome.Text,
-                    Valor = novoItem.Valor,
-                    Quantidade = novoItem.Quantidade,
-                    Desconto = novoItem.Desconto,
-                    Total = novoItem.Total
+                    Valor = item.Valor,
+                    Quantidade = item.Quantidade,
+                    Desconto = item.Desconto,
+                    Total = item.Total
                 };
-
-                if (tela is Pedidos)
-                {
-                    var tela = this.tela as Pedidos;
-                    tela.
-                }
-
             }
+
+            if (tela is Pedidos)
+            {
+                var tela = this.tela as Pedidos;
+                tela.AddListaItens(novoItemDetalhado);
+            }
+
+            return true;
         }
     }
 }

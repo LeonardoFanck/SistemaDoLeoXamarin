@@ -32,6 +32,18 @@ namespace XamarinAPI.Controllers
             return await _context.PedidoItens.ToListAsync();
         }
 
+        // GET: api/PedidoItems
+        [HttpGet("Pedido/{id}")]
+        public async Task<ActionResult<IEnumerable<PedidoItem>>> GetPedidoItensByPedido(int id)
+        {
+            if (_context.PedidoItens == null)
+            {
+                return NotFound();
+            }
+
+            return await _context.PedidoItens.Where(p => p.PedidoId == id).ToListAsync();
+        }
+
         // GET: api/PedidoItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PedidoItem>> GetPedidoItem(int id)

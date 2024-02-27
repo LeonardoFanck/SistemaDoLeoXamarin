@@ -108,7 +108,7 @@
                                        Text="Código"
                                        TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="End"/>
                                 <Entry Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                                       x:Name="TxtCodigo"
+                                       x:Name="TxtCodigo" Text="0"
                                        IsEnabled="False"/>
                                 <!--DATA-->
                                 <Label Grid.Row="1" Grid.Column="3"
@@ -256,69 +256,74 @@
                         </Grid>
                     </Frame>
 
-                    <CollectionView ItemsLayout="VerticalList"
-                                    SelectionMode="None"
-                                    x:Name="CollectionProdutos">
+                    <RefreshView x:Name="RefreshItens"
+                                 RefreshColor="Black"
+                                 Refreshing="RefreshItens_Refreshing">
 
-                        <CollectionView.EmptyView>
-                            <StackLayout Padding="10">
-                                <Label HorizontalOptions="Center" Text="Nenhum Item localizado" FontSize="Body"/>
-                            </StackLayout>
-                        </CollectionView.EmptyView>
+                        <CollectionView ItemsLayout="VerticalList"
+                                        x:Name="CollectionItens"
+                                        SelectionMode="Single">
+                            <CollectionView.EmptyView>
+                                <StackLayout Padding="10">
+                                    <Label HorizontalOptions="Center" Text="Nenhum item localizado" FontSize="Body"/>
+                                </StackLayout>
+                            </CollectionView.EmptyView>
 
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <SwipeView>
-                                    <SwipeView.RightItems>
-                                        <SwipeItem x:Name="SwDeleteProduto" Text="Deletar"
-                                                   BackgroundColor="Red"
-                                                   Invoked="SwDeleteProduto_Invoked"/>
-                                    </SwipeView.RightItems>
-                                    <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False">
-                                        <StackLayout>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="auto"/>
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <SwipeView BackgroundColor="Transparent" Padding="1">
+                                        <SwipeView.RightItems>
+                                            <SwipeItem x:Name="SwDeleteProduto" Text="Deletar"
+                                                       BackgroundColor="Red"
+                                                       Invoked="SwDeleteProduto_Invoked"/>
+                                        </SwipeView.RightItems>
+                                        <Frame BackgroundColor="White" BorderColor="Black" HasShadow="False">
+                                            <StackLayout>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto"/>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
 
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="auto"/>
-                                                </Grid.RowDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="auto"/>
+                                                    </Grid.RowDefinitions>
 
-                                                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
-                                                        Text="{Binding Nome}"
-                                                        HorizontalTextAlignment="Start"
-                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
-                                                <Label Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1"
-                                                        Text="{Binding Valor}"
-                                                        HorizontalTextAlignment="Start"
-                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
-                                                <Label Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1"
-                                                        Text="{Binding Quantidade}"
-                                                        HorizontalTextAlignment="Start"
-                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
-                                                <Label Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="1"
-                                                        Text="{Binding Desconto}"
-                                                        HorizontalTextAlignment="Start"
-                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
-                                                <Label Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="1"
-                                                        Text="{Binding Total}"
-                                                        HorizontalTextAlignment="Start"
-                                                        FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
-                                            </Grid>
-                                        </StackLayout>
-                                    </Frame>
-                                </SwipeView>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                                            Text="{Binding ProdutoNome}"
+                                                            HorizontalTextAlignment="Start"
+                                                            FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                                    <Label Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1"
+                                                            Text="{Binding Valor}"
+                                                            HorizontalTextAlignment="Start"
+                                                            FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                                    <Label Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="1"
+                                                            Text="{Binding Quantidade}"
+                                                            HorizontalTextAlignment="Center"
+                                                            FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                                    <Label Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="1"
+                                                            Text="{Binding Desconto}"
+                                                            HorizontalTextAlignment="Center"
+                                                            FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                                    <Label Grid.Row="0" Grid.Column="6" Grid.ColumnSpan="1"
+                                                            Text="{Binding Total}"
+                                                            HorizontalTextAlignment="End"
+                                                            FontSize="Body" FontAttributes="Italic" TextColor="Black" Margin="1" LineBreakMode="WordWrap" />
+                                                </Grid>
+                                            </StackLayout>
+                                        </Frame>
+                                    </SwipeView>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </RefreshView>
 
+                    <!--OPCOES DOS ITENS-->
                     <Grid Margin="0,0,0,20">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto" />

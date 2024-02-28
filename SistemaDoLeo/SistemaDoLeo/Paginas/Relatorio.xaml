@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SistemaDoLeo.Paginas.Relatorio">
+    <ContentPage.Content>
+        <!--CADASTRO-->
+        <StackLayout VerticalOptions="Start" Padding="10">
+            <Frame BorderColor="Black" CornerRadius="10">
+                <ScrollView VerticalScrollBarVisibility="Always">
+                    <Grid>
+                        <!--CONFIG DO GRID-->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!--TIPO OPERACAO-->
+                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                       Text="Operação:"
+                       TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="End"/>
+                        <RadioButton Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2"
+                                     x:Name="RadioCompra" Content="Compra"
+                                     FontSize="Body"
+                                     CheckedChanged="RadioCompra_CheckedChanged"/>
+                        <RadioButton Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2"
+                                     x:Name="RadioVenda" Content="Venda"
+                                     FontSize="Body"/>
+                        <!--DATA INICIAL-->
+                        <Label Grid.Row="1" Grid.Column="0"  Grid.ColumnSpan="3"
+                               Text="Dt Inicial"
+                               TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                        <DatePicker Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2"
+                                    x:Name="PkrDataInicial" 
+                                    Format="dd/MM/yyyy" HorizontalOptions="Start" FontSize="Body"
+                                    DateSelected="PkrDataInicial_DateSelected">
+                        </DatePicker>
+                        <!--DATA FINAL-->
+                        <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                               Text="Dt Final"
+                               TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                        <DatePicker Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2"
+                                    x:Name="PkrDataFinal" 
+                                    Format="dd/MM/yyyy" HorizontalOptions="Start" FontSize="Body"
+                                    DateSelected="PkrDataFinal_DateSelected">
+                        </DatePicker>
+                        <!--CLIENTE-->
+                        <StackLayout Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       x:Name="LblCliente" Text="Cliente"
+                                       TextColor="Black" VerticalOptions="Center" 
+                                       HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry  Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="5"
+                                        x:Name="TxtCliente"
+                                        MaxLength="50" FontSize="Body"
+                                        FontAttributes="Bold"
+                                        TextColor="Black"
+                                        Placeholder="Selecione um Cliente" IsEnabled="False">
+                                </Entry>
+                            </Grid>
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer x:Name="TapCliente" Tapped="TapCliente_Tapped"/>
+                            </StackLayout.GestureRecognizers>
+                        </StackLayout>
+                        
+                        <!--LIMPA CLIENTE-->
+                        <Button Grid.Row="4" Grid.Column="5"
+                                x:Name="BtnLimpaCliente" Text="Limpar" 
+                                FontSize="Micro" TextColor="Red" BackgroundColor="Transparent" 
+                                Clicked="BtnLimpaCliente_Clicked"/>
+                        
+                        <!--PGTO-->
+                        <StackLayout Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       Text="Pgto."
+                                       TextColor="Black" VerticalOptions="Center" 
+                                       HorizontalOptions="End" FontAttributes="Bold"/>
+                                <Entry  Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="5"
+                                        x:Name="TxtPgto" 
+                                        MaxLength="50" FontSize="Body"
+                                        Placeholder="Selecione uma Forma de Pgto." IsEnabled="False">
+                                </Entry>
+                            </Grid>
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer x:Name="TapPgto" Tapped="TapPgto_Tapped"/>
+                            </StackLayout.GestureRecognizers>
+                        </StackLayout>
+                            
+                        <!--LIMPAR PGTO-->
+                        <Button Grid.Row="5" Grid.Column="5"
+                                x:Name="BtnLimpaPgto" Text="Limpar" 
+                                FontSize="Micro" TextColor="Red" BackgroundColor="Transparent"
+                                Clicked="BtnLimpaPgto_Clicked"/>
+
+                        <!--BOTOES INFERIORES-->
+                        <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="6" 
+                                x:Name="BtnPesquisar" Text="Pesquisar" 
+                                BackgroundColor="LightGreen" TextColor="Black" FontAttributes="Italic"
+                                Clicked="BtnPesquisar_Clicked"/>
+                        
+                        <Button Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="6" 
+                                x:Name="BtnLimpar" Text="Limpar Tudo" 
+                                BackgroundColor="Transparent" TextColor="Red" FontAttributes="Italic"
+                                Clicked="BtnLimpar_Clicked"/>
+                    </Grid>
+                </ScrollView>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

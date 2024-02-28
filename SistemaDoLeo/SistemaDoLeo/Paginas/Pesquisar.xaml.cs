@@ -35,7 +35,9 @@ namespace SistemaDoLeo.Paginas
 		private readonly string urlPgto = "/FormaPgto";
 		private readonly string urlProduto = "/Produto";
 
-		private string Titulo = "Pesquisa";
+		private string tipoPedido;
+
+        private string Titulo = "Pesquisa";
 
 		private List<Cliente> ListaCliente = new List<Cliente>();
 		private List<FormaPgto> ListaPgto = new List<FormaPgto>();
@@ -52,6 +54,8 @@ namespace SistemaDoLeo.Paginas
 			this.tipo = tipo;
 		}
 
+
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -59,7 +63,30 @@ namespace SistemaDoLeo.Paginas
 			await ValidarTipos();
         }
 
-		private async Task ValidarTipos()
+		private async Task ValidarTipoCliente()
+		{
+			if(tela is Pedidos)
+			{
+				var telaPedido = tela as Pedidos;
+
+				tipoPedido = await telaPedido.GetTipoPedido();
+
+				return;
+			}
+
+			if(tela is Relatorio)
+			{
+				var telaRelatorio = tela as Relatorio;
+
+				tipoPedido = await telaRelatorio.GetTipoPedido();
+
+				return;
+			}
+
+		}
+
+
+        private async Task ValidarTipos()
 		{
 			if(tipo == TiposPesquisas.Clientes)
 			{
@@ -67,7 +94,9 @@ namespace SistemaDoLeo.Paginas
 
 				this.Title += " Clientes/Fornecedor";
 
-				await ListarClientes();
+                await ValidarTipoCliente();
+
+                await ListarClientes();
 			}
 			else if(tipo == TiposPesquisas.FormasPgto)
 			{
@@ -92,15 +121,27 @@ namespace SistemaDoLeo.Paginas
 			var json = await _client.GetStringAsync(url);
 			ListaCliente = JsonConvert.DeserializeObject<List<Cliente>>(json);
 			SrcBuscar.Text = string.Empty;
-			Listagem.ItemsSource = ListaCliente.Where(l => l.Inativo == false);
-		}
+
+			if (tipoPedido.Equals("Venda"))
+			{
+                ListaCliente = ListaCliente.Where(l => l.Inativo == false && l.TipoCliente == true).ToList();
+			}
+			else
+			{
+               ListaCliente = ListaCliente.Where(l => l.Inativo == false && l.TipoForncedor == true).ToList();
+            }
+
+			Listagem.ItemsSource = ListaCliente;
+        }
 
         private async Task ListarFormaPgto()
         {
             var json = await _client.GetStringAsync(url);
             ListaPgto = JsonConvert.DeserializeObject<List<FormaPgto>>(json);
             SrcBuscar.Text = string.Empty;
-            Listagem.ItemsSource = ListaPgto.Where(l => l.Inativo == false);
+            ListaPgto = ListaPgto.Where(l => l.Inativo == false).ToList();
+
+			Listagem.ItemsSource = ListaPgto;
         }
 
         private async Task ListarProdutos()
@@ -108,11 +149,15 @@ namespace SistemaDoLeo.Paginas
             var json = await _client.GetStringAsync(url);
             ListaProduto = JsonConvert.DeserializeObject<List<Produto>>(json);
             SrcBuscar.Text = string.Empty;
-            Listagem.ItemsSource = ListaProduto.Where(l => l.Inativo == false);
+            ListaProduto = ListaProduto.Where(l => l.Inativo == false).ToList();
+
+			Listagem.ItemsSource = ListaProduto;
         }
 
         private async void RefreshListagem_Refreshing(object sender, EventArgs e)
         {
+			RefreshListagem.IsRefreshing = true;
+
             if (tipo == TiposPesquisas.Clientes)
             {
 				await ListarClientes();
@@ -125,6 +170,8 @@ namespace SistemaDoLeo.Paginas
             {
 				await ListarProdutos();
             }
+
+			RefreshListagem.IsRefreshing = false;
         }
 
         private void Listagem_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -166,7 +213,15 @@ namespace SistemaDoLeo.Paginas
 					var cliente = Listagem.SelectedItem as Cliente;
 					var pedido = tela as Pedidos;
                     pedido.AtualizaCliente(cliente.Id);
+
 				}
+				else if(tela is Relatorio)
+				{
+					var cliente = Listagem.SelectedItem as Cliente;
+					var relatorio = tela as Relatorio;
+					relatorio.AtualizaCliente(cliente.Id);
+				}
+
             }
             else if (tipo == TiposPesquisas.FormasPgto)
             {
@@ -176,6 +231,12 @@ namespace SistemaDoLeo.Paginas
 					var pedido = tela as Pedidos;
 					pedido.AtualizaFormaPgto(pgto.Id);
 				}
+                else if (tela is Relatorio)
+                {
+                    var pgto = Listagem.SelectedItem as FormaPgto;
+                    var relatorio = tela as Relatorio;
+                    relatorio.AtualizaFormaPgto(pgto.Id);
+                }
             }
             else if (tipo == TiposPesquisas.Produtos)
             {

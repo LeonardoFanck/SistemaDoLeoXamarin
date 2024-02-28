@@ -679,6 +679,18 @@ namespace SistemaDoLeo.Paginas
             }
         }
 
+        public async Task<string> GetTipoPedido()
+        {
+            if (RadioVenda.IsChecked)
+            {
+                return "Venda";
+            }
+            else
+            {
+                return "Compra";
+            }
+        }
+
         private async void TapPgto_Tapped(object sender, EventArgs e)
         {
             if (Status != Visualizar)

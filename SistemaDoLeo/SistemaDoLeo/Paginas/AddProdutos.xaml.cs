@@ -55,7 +55,6 @@ namespace SistemaDoLeo.Paginas
             this.tela = tela;
             this.produto = produto;
             this.pedido = pedido;
-
         }
 
         // UTILIZADO PARA ALTERAR UM ITEM

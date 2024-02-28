@@ -15,6 +15,11 @@
                 <CollectionView x:Name="Listagem" 
                                 Margin="10" HorizontalOptions="CenterAndExpand" SelectionMode="Single"
                                 SelectionChanged="Listagem_SelectionChanged">
+                    <CollectionView.EmptyView>
+                        <Label Text="Nenhum registro localizado..."
+                               HorizontalTextAlignment="Center" FontAttributes="Italic"/>
+                    </CollectionView.EmptyView>
+                    
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout Padding="3">

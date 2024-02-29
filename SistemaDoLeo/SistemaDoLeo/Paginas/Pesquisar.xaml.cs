@@ -92,7 +92,7 @@ namespace SistemaDoLeo.Paginas
 			{
 				url = urlBase + urlCliente;
 
-				this.Title += " Clientes/Fornecedor";
+				this.Title = $"{Titulo} Clientes/Fornecedor";
 
                 await ValidarTipoCliente();
 
@@ -102,7 +102,7 @@ namespace SistemaDoLeo.Paginas
 			{
                 url = urlBase + urlPgto;
 
-                this.Title += " Forma de Pagamento";
+                this.Title = $"{Titulo} Forma de Pagamento";
 
                 await ListarFormaPgto();
             }
@@ -110,7 +110,7 @@ namespace SistemaDoLeo.Paginas
 			{
                 url = urlBase + urlProduto;
 
-                this.Title += " Produto";
+                this.Title = $"{Titulo} Produto";
 
                 await ListarProdutos();
             }

@@ -61,6 +61,11 @@ namespace XamarinAPI.DB
                 Id = 6,
                 Nome = "Produto"
             });
+            modelBuilder.Entity<Tela>().HasData(new Tela
+            {
+                Id = 7,
+                Nome = "Relatorio"
+            });
 
             // telas operador
 

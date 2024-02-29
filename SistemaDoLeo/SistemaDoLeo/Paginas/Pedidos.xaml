@@ -362,6 +362,8 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
 
                         <Button Grid.Row="0" Grid.Column="0"
@@ -371,13 +373,19 @@
 
                         <Button Grid.Row="0" Grid.Column="1"
                                 x:Name="BtnEditar" Text="Editar"
-                                Margin="10" BackgroundColor="LightSteelBlue"
+                                Margin="10" BackgroundColor="LightSteelBlue" IsEnabled="False"
                                 Clicked="BtnEditar_Clicked"/>
 
                         <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                 x:Name="BtnSalvar" Text="Salvar"
-                                Margin="40, 5" BackgroundColor="LightSeaGreen"
+                                Margin="40, 5" BackgroundColor="LightSeaGreen" IsEnabled="False"
                                 Clicked="BtnSalvar_Clicked"/>
+
+                        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                                x:Name="BtnImprimir" Text="Imprimir Pedido"
+                                Margin="60,20,60,0" BackgroundColor="Transparent"
+                                TextColor="Green"
+                                Clicked="BtnImprimir_Clicked" />
                     </Grid>
                 </StackLayout>
             </StackLayout>

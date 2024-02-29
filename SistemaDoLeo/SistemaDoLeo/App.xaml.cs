@@ -9,8 +9,10 @@ namespace SistemaDoLeo
         {
             InitializeComponent();
 
-            //MainPage = new NavigationPage(new MainPage());
-            MainPage = new NavigationPage(new Relatorio());
+            MainPage = new NavigationPage(new MainPage());
+            //MainPage = new NavigationPage(new AppShell());
+
+            //MainPage = new AppShell();
         }
 
         protected override void OnStart()

@@ -1,13 +1,13 @@
 ﻿using SistemaDoLeo.Modelos.Classes;
 using System;
-
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace SistemaDoLeo.Paginas
 {
     public partial class TelaPrincipal : FlyoutPage
     {
-        public TelaPrincipal()
+        public TelaPrincipal(Operador operador, List<OperadorTela> permissoes)
         {
             InitializeComponent();
 

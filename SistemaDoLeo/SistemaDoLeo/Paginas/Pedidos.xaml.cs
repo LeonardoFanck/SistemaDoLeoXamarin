@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using Plugin.XamarinFormsSaveOpenPDFPackage;
 using SistemaDoLeo.DB;
 using SistemaDoLeo.Modelos.Classes;
+using SistemaDoLeo.Relatorios;
 using SistemaDoLeo.Toast;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using static SistemaDoLeo.Paginas.AddProdutos;
 
 namespace SistemaDoLeo.Paginas
 {
@@ -534,6 +537,8 @@ namespace SistemaDoLeo.Paginas
                     Total = novoRegistro.Total
                 });
 
+                pedidoAtual = listaPedidos.FirstOrDefault(l => l.Id == novoRegistro.Id);
+
                 CvListagem.ItemsSource = new List<PedidoDetalhado>(listaPedidos);
 
                 new ToastBase(Titulo, "Registro Salvo", $"Registro salvo com Sucesso!\n" +
@@ -566,6 +571,8 @@ namespace SistemaDoLeo.Paginas
                     Desconto = pedido.Desconto,
                     Total = pedido.Total
                 });
+
+                pedidoAtual = listaPedidos.FirstOrDefault(l => l.Id == pedido.Id);
 
                 CvListagem.ItemsSource = new List<PedidoDetalhado>(listaPedidos).OrderBy(i => i.Id);
 
@@ -898,6 +905,38 @@ namespace SistemaDoLeo.Paginas
         private async void RefreshItens_Refreshing(object sender, EventArgs e)
         {
             await CarregaListaItens();
+        }
+
+        private async void BtnImprimir_Clicked(object sender, EventArgs e)
+        {
+            if(Status == Cadastro)
+            {
+                new ToastBase(Titulo, "Necessário finalizar o cadastro", $"Necessário finalizar o cadastro do pedido para estar" +
+                    $" gerando a impressão do pedido!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
+            if(pedidoAtual == null)
+            {
+                new ToastBase(Titulo, "Pedido inválido", $"O pedido selecionado é inválido para estar fazendo a impressão" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
+            await GerarImpressaoPedido();
+        }
+
+        private async Task GerarImpressaoPedido()
+        {
+            PDFGenerator pdf = new PDFGenerator();
+
+            var stream = await pdf.RelatorioDetalhesPedido(pedidoAtual, listaItens);
+
+            await CrossXamarinFormsSaveOpenPDFPackage.Current.SaveAndView($"ImpressaoPedido_{pedidoAtual.Id}.pdf", "application/pdf",
+                stream, PDFOpenContext.ChooseApp);
         }
     }
 }

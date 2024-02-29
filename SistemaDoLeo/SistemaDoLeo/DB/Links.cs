@@ -13,5 +13,7 @@ namespace SistemaDoLeo.DB
         public static string pedido = "Pedido";
         public static string cliente = "Cliente";
         public static string formaPgto = "FormaPgto";
+        public static string operador = "Operador";
+        public static string operadorTelas = "OperadorTelas";
     }
 }

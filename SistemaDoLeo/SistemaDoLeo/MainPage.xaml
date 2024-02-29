@@ -26,6 +26,7 @@
                         <Entry x:Name="TxtOperador" 
                                Keyboard="Numeric" 
                                ReturnType="Next"
+                               Unfocused="TxtOperador_Unfocused"
                                ClearButtonVisibility="WhileEditing" />
                         <Label Text="Senha" 
                                FontSize="Body" 

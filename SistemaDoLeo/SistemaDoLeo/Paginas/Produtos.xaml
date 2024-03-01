@@ -121,7 +121,7 @@
                                    TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
                             <Entry Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="1"
                                    x:Name="TxtEstoque"
-                                   IsEnabled="False" Keyboard="Numeric"/>
+                                   IsEnabled="False" Keyboard="Default"/>
                         </Grid>
                     </Frame>
                 </StackLayout>

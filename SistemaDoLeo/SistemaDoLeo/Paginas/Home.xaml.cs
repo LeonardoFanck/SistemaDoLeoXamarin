@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using SistemaDoLeo.Modelos.Classes;
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace SistemaDoLeo.Paginas
@@ -6,9 +7,11 @@ namespace SistemaDoLeo.Paginas
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Home : ContentPage
     {
-        public Home()
+        public Home(Operador operador)
         {
             InitializeComponent();
+
+            LblNome.Text += operador.Nome;
         }
     }
 }

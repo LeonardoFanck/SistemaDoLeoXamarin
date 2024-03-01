@@ -77,6 +77,8 @@ namespace XamarinAPI.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                await _context.Database.ExecuteSqlRawAsync("atualizaEstoque {0}", pedidoItem.ProdutoId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -103,7 +105,10 @@ namespace XamarinAPI.Controllers
               return Problem("Entity set 'AppDbContext.PedidoItens'  is null.");
           }
             _context.PedidoItens.Add(pedidoItem);
+
             await _context.SaveChangesAsync();
+
+            await _context.Database.ExecuteSqlRawAsync("atualizaEstoque {0}", pedidoItem.ProdutoId);
 
             return CreatedAtAction("GetPedidoItem", new { id = pedidoItem.Id }, pedidoItem);
         }
@@ -123,7 +128,10 @@ namespace XamarinAPI.Controllers
             }
 
             _context.PedidoItens.Remove(pedidoItem);
+
             await _context.SaveChangesAsync();
+
+            await _context.Database.ExecuteSqlRawAsync("atualizaEstoque {0}", pedidoItem.ProdutoId);
 
             return NoContent();
         }

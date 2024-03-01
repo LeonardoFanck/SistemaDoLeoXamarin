@@ -32,6 +32,7 @@ namespace SistemaDoLeo.Paginas
         private object tela;
         private Produto produto; 
         private PedidoItemDetalhado item;
+        List<Produto> listaProdutos = new List<Produto>();
 
         private string url = $"{Links.ip}/PedidoItems";
 
@@ -58,7 +59,7 @@ namespace SistemaDoLeo.Paginas
         }
 
         // UTILIZADO PARA ALTERAR UM ITEM
-        public AddProdutos(object tela, PedidoItemDetalhado item, PedidoDetalhado pedido)
+        public AddProdutos(object tela, PedidoItemDetalhado item, PedidoDetalhado pedido, List<Produto> listaProdutos)
         {
             InitializeComponent();
 
@@ -69,6 +70,7 @@ namespace SistemaDoLeo.Paginas
             this.tela = tela;
             this.item = item;
             this.pedido = pedido;
+            this.listaProdutos = listaProdutos;
         }
 
         protected override async void OnAppearing()
@@ -80,7 +82,7 @@ namespace SistemaDoLeo.Paginas
 
             await ValidaTipoOperacao();
 
-            await PreencheProduto();   
+            await PreencheProduto();
         }
 
         private async Task ValidaTipoOperacao()
@@ -109,6 +111,7 @@ namespace SistemaDoLeo.Paginas
                 {
                     TxtValor.Text = produto.Custo.ToString("C2");
                 }
+                TxtEstoque.Text = produto.Estoque.ToString();
                 TxtQuantidade.Text = (1).ToString();
                 TxtDesconto.Text = (0.00).ToString("F2") + "%";
             }
@@ -117,11 +120,14 @@ namespace SistemaDoLeo.Paginas
                 TxtCodigo.Text = item.ProdutoId.ToString();
                 TxtNome.Text = item.ProdutoNome;
                 TxtValor.Text = item.Valor.ToString("C2");
+                TxtEstoque.Text = listaProdutos.FirstOrDefault(l => l.Id == item.ProdutoId).Estoque.ToString();
                 TxtQuantidade.Text = item.Quantidade.ToString();
                 TxtDesconto.Text = item.Desconto.ToString("F2") + "%";
             }
 
             await CalcularValor();
+
+            await CalcularQuantidade();
         }
 
         private async Task CalcularValor()
@@ -133,6 +139,33 @@ namespace SistemaDoLeo.Paginas
             var total = (valor * quantidade) - (quantidade * (valor * (desconto * Convert.ToDecimal(0.01))));
 
             TxtTotal.Text = total.ToString("C2");
+        }
+
+        private async Task CalcularQuantidade()
+        {
+            var estoqueAtual = Convert.ToInt32(TxtEstoque.Text);
+            var quantidade = Convert.ToInt32(await LimpaValores(TxtQuantidade.Text));
+            decimal novoEstoque;
+            if (pedido.TipoOperacao.Equals("Venda"))
+            {
+                if(status == editar)
+                {
+                    estoqueAtual += item.Quantidade;
+                }
+                
+                novoEstoque = estoqueAtual - quantidade;
+            }
+            else
+            {
+                if (status == editar)
+                {
+                    estoqueAtual -= item.Quantidade;
+                }
+
+                novoEstoque = estoqueAtual + quantidade;
+            }
+
+            TxtNovoEstoque.Text = novoEstoque.ToString();
         }
 
         private async Task<string> LimpaValores(string valor)
@@ -175,6 +208,8 @@ namespace SistemaDoLeo.Paginas
 
                 await CalcularValor();
 
+                await CalcularQuantidade();
+
                 return;
             }
 
@@ -190,6 +225,8 @@ namespace SistemaDoLeo.Paginas
             }
 
             await CalcularValor();
+
+            await CalcularQuantidade();
         }
 
         private async void TxtDesconto_Unfocused(object sender, FocusEventArgs e)

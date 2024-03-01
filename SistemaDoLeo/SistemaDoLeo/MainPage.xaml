@@ -36,7 +36,8 @@
                                Keyboard="Default" 
                                ReturnType="Done"
                                IsPassword="True"
-                               ClearButtonVisibility="WhileEditing" />
+                               ClearButtonVisibility="WhileEditing" 
+                               Completed="btnLogar_Clicked" />
                     </StackLayout>
                 </Frame>
 

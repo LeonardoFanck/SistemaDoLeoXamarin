@@ -24,11 +24,13 @@ namespace SistemaDoLeo.Paginas
         private List<Categoria> listaBase = new List<Categoria>();
         private ProximoRegistro proximoRegistro;
 
+        OperadorTela permissoes;
+
         private readonly HttpClient _cliente;
         private string url = $"{Links.ip}/Categoria";
         private string Titulo = "Categoria";
 
-        public Categorias()
+        public Categorias(OperadorTela permissoes)
         {
             InitializeComponent();
 
@@ -38,6 +40,8 @@ namespace SistemaDoLeo.Paginas
 
             HttpClientHandler insecureHandler = PermissaoDeCertificado.GetInsecureHandler();
             _cliente = new HttpClient(insecureHandler);
+
+            this.permissoes = permissoes;
 
             CarregaLista();
         }
@@ -75,6 +79,14 @@ namespace SistemaDoLeo.Paginas
 
         private async void SwDeletar_Invoked(object sender, EventArgs e)
         {
+            if (!permissoes.Excluir)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para excluir o registro!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             var selecionado = (sender as SwipeItem)?.BindingContext as Categoria;
 
             if (selecionado == null)
@@ -122,6 +134,14 @@ namespace SistemaDoLeo.Paginas
 
         private async void BtnNovo_Clicked(object sender, EventArgs e)
         {
+            if (!permissoes.Novo)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para criar um novo registro!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             limpaCampos();
             validaStatus(Cadastro);
 
@@ -144,6 +164,14 @@ namespace SistemaDoLeo.Paginas
 
         private async void BtnEditar_Clicked(object sender, EventArgs e)
         {
+            if (!permissoes.Editar)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para editar o registro!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
             {
                 await DisplayAlert(Titulo, "Necessário selecionar um item", "Ok");

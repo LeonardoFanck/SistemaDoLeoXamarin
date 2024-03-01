@@ -4,8 +4,15 @@
              x:Class="SistemaDoLeo.Paginas.Home"
              Title="Início">
     <ContentPage.Content>
+
         <StackLayout>
-            <Image Source="logo.png" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
+            <Label Text="Sistema do Leo 4.0" HorizontalTextAlignment="Center" 
+                   Margin="0,90,0,10" FontSize="Title" FontAttributes="Bold" TextColor="Black"
+                   VerticalTextAlignment="Center" VerticalOptions="Center"/>
+            <Label x:Name="LblNome" Text="Bem vindo " HorizontalTextAlignment="Center" 
+                   Margin="0,0,0,100" FontSize="Subtitle" FontAttributes="Bold" TextColor="Black"
+                   VerticalTextAlignment="Center" VerticalOptions="Center"/>
+            <Image Source="logo.png" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

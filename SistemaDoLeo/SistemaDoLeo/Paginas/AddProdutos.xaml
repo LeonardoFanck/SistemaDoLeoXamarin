@@ -48,32 +48,54 @@
                                    ReturnType="Next" Keyboard="Numeric" HorizontalTextAlignment="Center"
                                    Unfocused="TxtValor_Unfocused">
                             </Entry>
-                            <!--QUANTIDADE-->
+                            <!--ESTOQUE-->
                             <Label Grid.Row="4" Grid.Column="0"
-                                   Text="Quantidade"
+                                   Text="Estoque Atual"
                                    TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
                             <Entry Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3"
+                                   x:Name="TxtEstoque" MaxLength="50"
+                                   ReturnType="Next" Keyboard="Numeric" HorizontalTextAlignment="Center" IsEnabled="False">
+                            </Entry>
+                            <!--QUANTIDADE-->
+                            <Label Grid.Row="5" Grid.Column="0"
+                                   Text="Quantidade"
+                                   TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                            <Entry Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3"
                                    x:Name="TxtQuantidade" MaxLength="50"
                                    ReturnType="Next" Keyboard="Numeric" HorizontalTextAlignment="Center"
                                    Unfocused="TxtQuantidade_Unfocused">
                             </Entry>
+                            
+                            <!--NOVO ESTOQUE-->
+                            <Frame Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="2"
+                                   BorderColor="Black">
+                                <StackLayout >
+                                    <Label Text="Novo Estoque"
+                                           TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                                    <Entry x:Name="TxtNovoEstoque" Text="0"
+                                           MaxLength="50"
+                                           ReturnType="Next" Keyboard="Numeric" HorizontalTextAlignment="Center" IsEnabled="False">
+                                    </Entry>
+                                </StackLayout>
+                            </Frame>
+
                             <!--DESCONTO-->
-                            <Label Grid.Row="5" Grid.Column="0"
+                            <Label Grid.Row="6" Grid.Column="0"
                                    Text="Desc"
                                    TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
-                            <Entry Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3"
+                            <Entry Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3"
                                    x:Name="TxtDesconto" MaxLength="50"
                                    ReturnType="Done" Keyboard="Numeric" HorizontalTextAlignment="Center"
                                    Unfocused="TxtDesconto_Unfocused">
                             </Entry>
                             <!--TOTAL-->
-                            <Label Grid.Row="6" Grid.Column="0"
+                            <Label Grid.Row="7" Grid.Column="0"
                                    Text="Total"
                                    TextColor="Black" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
-                            <Entry Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3"
+                            <Entry Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3"
                                    x:Name="TxtTotal" MaxLength="50"
                                    ReturnType="Done" Keyboard="Numeric" HorizontalTextAlignment="Center"
-                                   IsEnabled="False">
+                                   IsEnabled="False" FontAttributes="Bold" TextColor="Black">
                             </Entry>
                         </Grid>
                     </ScrollView>

@@ -34,43 +34,43 @@ namespace SistemaDoLeo
             TabBar tabBar = new TabBar();
             OperadorTela tela;
 
-            tabBar.Items.Add(CreateShellContent("Inicio", "inicio.png", new Home()));
+            tabBar.Items.Add(CreateShellContent("Inicio", "home.png", new Home(operador)));
 
             // PEDIDO
             tela = listaPermissao.FirstOrDefault(l => l.TelaId == 5);
             if (tela != null && tela.Ativo)
             {
-                tabBar.Items.Add(CreateShellContent("Pedido", "pedido.png", new Pedidos()));
+                tabBar.Items.Add(CreateShellContent("Pedido", "pedido.png", new Pedidos(tela)));
             }
             // CLIENTE
             tela = listaPermissao.FirstOrDefault(l => l.TelaId == 3);
             if (tela != null && tela.Ativo)
             {
-                tabBar.Items.Add(CreateShellContent("Cliente", "cliente.png", new Clientes()));
+                tabBar.Items.Add(CreateShellContent("Cliente", "cliente.png", new Clientes(tela)));
             }
             // PRODUTO
             tela = listaPermissao.FirstOrDefault(l => l.TelaId == 6);
             if (tela != null && tela.Ativo)
             {
-                tabBar.Items.Add(CreateShellContent("Produto", "produto.png", new Produtos()));
+                tabBar.Items.Add(CreateShellContent("Produto", "produto.png", new Produtos(tela)));
             }
             // OPERADOR
             tela = listaPermissao.FirstOrDefault(l => l.TelaId == 1);
             if (tela != null && tela.Ativo)
             {
-                tabBar.Items.Add(CreateShellContent("Operador", "operador.png", new Operadores()));
+                tabBar.Items.Add(CreateShellContent("Operador", "operador.png", new Operadores(tela)));
             }
             // CATEGORIA
             tela = listaPermissao.FirstOrDefault(l => l.TelaId == 2);
             if (tela != null && tela.Ativo)
             {
-                tabBar.Items.Add(CreateShellContent("Categoria", "categoria.png", new Categorias()));
+                tabBar.Items.Add(CreateShellContent("Categoria", "cadastro.png", new Categorias(tela)));
             }
             // FORMA PGTO
             tela = listaPermissao.FirstOrDefault(l => l.TelaId == 4);
             if (tela != null && tela.Ativo)
             {
-                tabBar.Items.Add(CreateShellContent("Forma Pgto", "pgto.png", new FormasPgto()));
+                tabBar.Items.Add(CreateShellContent("Forma Pgto", "cadastro.png", new FormasPgto(tela)));
             }
             // RELATORIO
             tela = listaPermissao.FirstOrDefault(l => l.TelaId == 7);

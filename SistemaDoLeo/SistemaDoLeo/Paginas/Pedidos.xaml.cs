@@ -44,6 +44,8 @@ namespace SistemaDoLeo.Paginas
         private FormaPgto pgtoAtual;
         private PedidoDetalhado pedidoAtual;
 
+        OperadorTela permissoes;
+
         private readonly HttpClient _client;
         private string url = $"{Links.ip}/Pedido";
         private string urlCliente = $"{Links.ip}/Cliente";
@@ -51,7 +53,7 @@ namespace SistemaDoLeo.Paginas
         private string urlItens = $"{Links.ip}/PedidoItems";
         private string urlProdutos = $"{Links.ip}/Produto";
 
-        public Pedidos()
+        public Pedidos(OperadorTela permissoes)
         {
             InitializeComponent();
 
@@ -61,6 +63,10 @@ namespace SistemaDoLeo.Paginas
 
             HttpClientHandler httpClientHandler = PermissaoDeCertificado.GetInsecureHandler();
             _client = new HttpClient(httpClientHandler);
+
+            this.permissoes = permissoes;
+
+            AbrirProdutos(false);
         }
 
         protected async override void OnAppearing()
@@ -84,11 +90,11 @@ namespace SistemaDoLeo.Paginas
             await CarregaListaPgto();
 
             var json = await _client.GetStringAsync(url);
-            var pedidios = JsonConvert.DeserializeObject<List<Pedido>>(json);
+            var pedidos = JsonConvert.DeserializeObject<List<Pedido>>(json);
 
             listaPedidos.Clear();
 
-            foreach(var pedido in pedidios)
+            foreach(var pedido in pedidos)
             {
                 listaPedidos.Add(new PedidoDetalhado()
                 {
@@ -110,13 +116,40 @@ namespace SistemaDoLeo.Paginas
             RefreshV.IsRefreshing = false;
         }
 
-        private async Task CarregaListaItens()
+        private async Task<List<PedidoItem>> GetItensParaDelete(int idPedido)
+        {
+            await CarregaListaProdutos();
+
+            var json = await _client.GetStringAsync($"{urlItens}/Pedido/{idPedido}");
+            var itens = JsonConvert.DeserializeObject<List<PedidoItem>>(json);
+
+            List<PedidoItem> lista = new List<PedidoItem>();
+
+            foreach (var item in itens)
+            {
+                lista.Add(new PedidoItem()
+                {
+                    Id = item.Id,
+                    PedidoId = item.PedidoId,
+                    ProdutoId = item.ProdutoId,
+                    Valor = item.Valor,
+                    Quantidade = item.Quantidade,
+                    Desconto = item.Desconto,
+                    Total = item.Total
+                });
+            }
+
+            return lista;
+        }
+
+
+        private async Task CarregaListaItens(int idPedido)
         {
             RefreshItens.IsRefreshing = true;
 
             await CarregaListaProdutos();
 
-            var json = await _client.GetStringAsync($"{urlItens}/Pedido/{TxtCodigo.Text}");
+            var json = await _client.GetStringAsync($"{urlItens}/Pedido/{idPedido}");
             var itens = JsonConvert.DeserializeObject<List<PedidoItem>>(json);
 
             listaItens.Clear();
@@ -183,6 +216,7 @@ namespace SistemaDoLeo.Paginas
             }
         }
 
+
         private void SrcBuscar_TextChanged(object sender, TextChangedEventArgs e)
         {
             CvListagem.ItemsSource = listaPedidos.Where(p => p.ClienteNome.ToLower().Contains(SrcBuscar.Text.ToLower())).ToList();
@@ -223,7 +257,7 @@ namespace SistemaDoLeo.Paginas
 
                 await validaStatus(Visualizar);
 
-                await CarregaListaItens();
+                await CarregaListaItens(selecionado.Id);
 
                 // limpa o selecionado para poder selecionar o mesmo novamente
                 CvListagem.SelectedItem = null;
@@ -262,8 +296,8 @@ namespace SistemaDoLeo.Paginas
 
                 BtnNovo.Text = "Novo";
 
-                BtnEditar.IsEnabled = true;
-                BtnNovo.IsEnabled = true;
+                BtnEditar.IsEnabled = permissoes.Editar ? true : false;
+                BtnNovo.IsEnabled = permissoes.Novo ? true : false;
                 BtnSalvar.IsEnabled = false;
             }
             else if (status == Editar)
@@ -281,7 +315,7 @@ namespace SistemaDoLeo.Paginas
                 TxtTotal.IsEnabled = false;
 
                 BtnEditar.IsEnabled = false;
-                BtnNovo.IsEnabled = true;
+                BtnNovo.IsEnabled = permissoes.Novo ? true : false;
                 BtnSalvar.IsEnabled = true;
 
             }
@@ -302,13 +336,21 @@ namespace SistemaDoLeo.Paginas
                 BtnNovo.Text = "Limpar";
 
                 BtnEditar.IsEnabled = false;
-                BtnNovo.IsEnabled = true;
+                BtnNovo.IsEnabled = permissoes.Novo ? true : false;
                 BtnSalvar.IsEnabled = true;
             }
         }
 
         private async void SwDeletar_Invoked(object sender, EventArgs e)
         {
+            if (!permissoes.Excluir)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para excluir pedidos!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             var selecionado = (sender as SwipeItem)?.BindingContext as PedidoDetalhado;
 
             if (selecionado == null)
@@ -335,7 +377,13 @@ namespace SistemaDoLeo.Paginas
                     return;
                 }
 
-                listaPedidos.Remove(selecionado);
+                await DeletarItensPedido(selecionado.Id);
+
+                listaPedidos.Remove(listaPedidos.FirstOrDefault(l => l.Id == selecionado.Id));
+
+                CvListagem.ItemsSource = null;
+
+                CvListagem.ItemsSource = listaPedidos;
 
                 // LIMPA OS CAMPOS DO CADASTRO PARA NÃO DEIXAR EDITAR O ITEM EXCLUIDO
                 LimpaCampos();
@@ -358,6 +406,16 @@ namespace SistemaDoLeo.Paginas
             }
         }
 
+        private async Task DeletarItensPedido(int idPedido)
+        {
+            var itensDelete = await GetItensParaDelete(idPedido);
+
+            foreach(var item in itensDelete)
+            {
+                await _client.DeleteAsync($"{urlItens}/{item.Id}");
+            }
+        }
+
         private void PkrData_DateSelected(object sender, DateChangedEventArgs e)
         {
 
@@ -365,6 +423,14 @@ namespace SistemaDoLeo.Paginas
 
         private async void BtnNovo_Clicked(object sender, EventArgs e)
         {
+            if (!permissoes.Novo)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para adicionar novos pedidos!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             LimpaCampos();
 
             await validaStatus(Cadastro);
@@ -386,9 +452,18 @@ namespace SistemaDoLeo.Paginas
 
         private async void BtnEditar_Clicked(object sender, EventArgs e)
         {
-            if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
+            if (!permissoes.Editar)
             {
-                await DisplayAlert(Titulo, "Necessário selecionar um registro", "Ok");
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para editar pedidos!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
+            if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
+            { 
+                new ToastBase(Titulo, "Necessário selecionar um registro", $"Necessário selecionar um registro para estar efetuando a edição!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
 
                 return;
             }
@@ -713,6 +788,14 @@ namespace SistemaDoLeo.Paginas
 
         private async void SwDeleteProduto_Invoked(object sender, EventArgs e)
         {
+            if (!permissoes.Excluir)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para excluir itens!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             var selecionado = (sender as SwipeItem)?.BindingContext as PedidoItemDetalhado;
 
             if (selecionado == null)
@@ -761,6 +844,14 @@ namespace SistemaDoLeo.Paginas
 
         private void BtnEditProduto_Clicked(object sender, EventArgs e)
         {
+            if (!permissoes.Editar)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para editar os itens!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             if(CollectionItens.SelectedItem == null)
             {
                 new ToastBase(Titulo, "Necessário selecionar um item", $"Nenhum item selecionado para estar realizando a edição!" +
@@ -771,11 +862,24 @@ namespace SistemaDoLeo.Paginas
 
             var item = CollectionItens.SelectedItem as PedidoItemDetalhado;
 
-            Navigation.PushAsync(new AddProdutos(this, item, pedidoAtual));
+            Navigation.PushAsync(new AddProdutos(this, item, pedidoAtual, listaProdutos));
         }
 
         private async void BtnAddProduto_Clicked(object sender, EventArgs e)
         {
+            if (!permissoes.Novo)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para adicionar novos itens!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
+            if(TxtCodigo.Text == null || TxtCodigo.Text == "" || TxtCodigo.Text == (0).ToString())
+            {
+                return;
+            }
+
             await Navigation.PushAsync(new Pesquisar(this, Pesquisar.TiposPesquisas.Produtos));
         }
 
@@ -875,16 +979,18 @@ namespace SistemaDoLeo.Paginas
             await AbrirProdutos(true);
         }
 
-        private void LimpaCampos()
+        private async void LimpaCampos()
         {
             RadioVenda.IsChecked = true;
-            TxtCodigo.Text = string.Empty;
+            TxtCodigo.Text = (0).ToString();
             PkrData.Date = DateTime.Today;
             TxtCliente.Text = string.Empty;
             TxtPgto.Text = string.Empty;
             TxtValor.Text = (0.00).ToString("C2");
             TxtDesconto.Text = (0.00).ToString("F2") + "%";
             TxtTotal.Text = (0.00).ToString("C2");
+
+            CollectionItens.ItemsSource = null;
         }
         
         private async Task<string> LimpaValores(string valor)
@@ -904,7 +1010,7 @@ namespace SistemaDoLeo.Paginas
 
         private async void RefreshItens_Refreshing(object sender, EventArgs e)
         {
-            await CarregaListaItens();
+            await CarregaListaItens(Convert.ToInt32(TxtCodigo.Text));
         }
 
         private async void BtnImprimir_Clicked(object sender, EventArgs e)

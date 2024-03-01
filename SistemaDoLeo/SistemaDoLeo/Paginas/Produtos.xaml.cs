@@ -29,17 +29,21 @@ namespace SistemaDoLeo.Paginas
         private List<Produto> listaProdutos = new List<Produto>();
         private ProximoRegistro proximoRegistro;
 
+        OperadorTela permissoes;
+
         private readonly HttpClient _client;
         private string urlCategoria = $"{Links.ip}/Categoria";
         private string url = $"{Links.ip}/Produto";
 
-        public Produtos()
+        public Produtos(OperadorTela permissoes)
         {
             InitializeComponent();
 
             BindingContext = this;
 
             CurrentPage = Children[0];
+
+            this.permissoes = permissoes;
 
             HttpClientHandler httpClientHandler = PermissaoDeCertificado.GetInsecureHandler();
             _client = new HttpClient(httpClientHandler);
@@ -93,6 +97,7 @@ namespace SistemaDoLeo.Paginas
                 TxtCusto.Text = selecionado.Custo.ToString();
                 TxtUnidade.Text = selecionado.Unidade;
                 ChkInativo.IsChecked = selecionado.Inativo;
+                TxtEstoque.Text = selecionado.Estoque.ToString();
 
                 await validaStatus(Visualizar);
 
@@ -162,6 +167,14 @@ namespace SistemaDoLeo.Paginas
 
         private async void SwDeletar_Invoked(object sender, EventArgs e)
         {
+            if (!permissoes.Excluir)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para excluir o registro!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             var selecionado = (sender as SwipeItem)?.BindingContext as Produto;
 
             if (selecionado == null)
@@ -377,6 +390,14 @@ namespace SistemaDoLeo.Paginas
 
         private async void BtnNovo_Clicked(object sender, EventArgs e)
         {
+            if (!permissoes.Novo)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para criar um novo registro!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             LimpaCampos();
 
             await validaStatus(Cadastro);
@@ -400,6 +421,14 @@ namespace SistemaDoLeo.Paginas
 
         private async void BtnEditar_Clicked(object sender, EventArgs e)
         {
+            if (!permissoes.Editar)
+            {
+                new ToastBase(Titulo, "Acesso negado", $"Operador não tem permissão para editar o registro!" +
+                    $"\n\n\n{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return;
+            }
+
             if (TxtCodigo.Text == "" || TxtCodigo.Text == null)
             {
                 await DisplayAlert(Titulo, "Necessário selecionar um registro", "Ok");

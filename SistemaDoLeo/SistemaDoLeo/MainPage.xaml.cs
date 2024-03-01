@@ -73,9 +73,6 @@ namespace SistemaDoLeo
 
                 if(await ValidarOperador())
                 {
-                    //await Navigation.PushAsync(new AppShell(operador, listaPermissoes));
-                    //await Shell.Current.GoToAsync(nameof(AppShell));
-
                     Application.Current.MainPage = new AppShell(operador, listaPermissoes);
 
                     LimpaCampos();
@@ -134,6 +131,14 @@ namespace SistemaDoLeo
             if(operador == null)
             {
                 new ToastBase(Titulo, "Operador não localizado", $"Operador {TxtOperador.Text} não localizado, informar um operador válido" +
+                        $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                return false;
+            }
+
+            if (operador.Inativo)
+            {
+                new ToastBase(Titulo, "Operador inativo", $"Operador: {TxtOperador.Text} inativo, contate a administração para fazer a ativação" +
                         $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
 
                 return false;

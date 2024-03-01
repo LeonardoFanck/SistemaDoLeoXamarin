@@ -396,7 +396,7 @@ namespace SistemaDoLeo.Paginas
 
                 return false;
             }
-            else if (PkrUf.SelectedItem.ToString() == "" || PkrUf.SelectedItem == null)
+            else if (PkrUf.SelectedItem == null || PkrUf.SelectedIndex == -1)
             {
                 new ToastBase(Titulo, "Campo Obrigatório", $"Necessário informar uma UF\n\n\n " +
                     $"{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
@@ -605,6 +605,8 @@ namespace SistemaDoLeo.Paginas
                 new ToastBase(Titulo, "CEP Inválido", $"Cep: {TxtCep.Text} inválido, tamanho incorreto." +
                     $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
 
+                telaCarregamento();
+
                 return;
             }
 
@@ -615,6 +617,8 @@ namespace SistemaDoLeo.Paginas
                 new ToastBase(Titulo, "CEP não localizado", $"Cep: {TxtCep.Text} inválido, não foi localizado." +
                     $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
 
+                telaCarregamento();
+
                 return;
             }
 
@@ -624,6 +628,8 @@ namespace SistemaDoLeo.Paginas
             {
                 new ToastBase(Titulo, "CEP não localizado", $"Cep: {TxtCep.Text} inválido, não foi localizado." +
                     $"\n\n\n {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}", true, Color.White.ToHex());
+
+                telaCarregamento();
 
                 return;
             }

@@ -6,7 +6,8 @@ namespace SistemaDoLeo.DB
 {
     public class Links
     {
-        public static string ip = "https://10.0.2.2:7097/api";
+        public static string ip = "https://10.0.2.2:7097/api"; // EMULADOR
+        //public static string ip = "http://192.168.5.76:8090/api"; // COMPUMATE
 
         public static string proximoRegistro = $"{ip}/ProximoRegistro/1";
 

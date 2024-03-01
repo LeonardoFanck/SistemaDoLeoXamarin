@@ -44,6 +44,8 @@ namespace SistemaDoLeo.Paginas
         {
             InitializeComponent();
 
+            RadioVenda.IsChecked = true;
+            
             _client = new HttpClient(PermissaoDeCertificado.GetInsecureHandler());
         }
 
@@ -51,9 +53,8 @@ namespace SistemaDoLeo.Paginas
         {
             base.OnAppearing();
 
-            RadioVenda.IsChecked = true;
-
             await CarregaListaClientes();
+
             await CarregaListaPgto();
 
             await ValidarTipoOperacao();
@@ -113,6 +114,9 @@ namespace SistemaDoLeo.Paginas
 
         private async void RadioCompra_CheckedChanged(object sender, CheckedChangedEventArgs e)
         {
+            clienteSelecionado = null;
+            TxtCliente.Text = string.Empty;
+
             await ValidarTipoOperacao();
         }
 
@@ -200,7 +204,7 @@ namespace SistemaDoLeo.Paginas
             await CarregaListaPedidos();
 
             var dataInicio = PkrDataInicial.Date;
-            var dataFinal = PkrDataFinal.Date;
+            var dataFinal = PkrDataFinal.Date.AddHours(23.99);
 
             var pedidos = listaPedidos.Where(l => l.TipoOperacao.Equals(tipoOperacao) && l.Data >= dataInicio && l.Data <= dataFinal);
 

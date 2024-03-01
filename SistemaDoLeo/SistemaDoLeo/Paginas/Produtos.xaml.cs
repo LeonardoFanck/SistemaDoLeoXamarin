@@ -47,21 +47,23 @@ namespace SistemaDoLeo.Paginas
 
             HttpClientHandler httpClientHandler = PermissaoDeCertificado.GetInsecureHandler();
             _client = new HttpClient(httpClientHandler);
+            
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            
+            await CarregaCategorias();
 
             await CarregaListaProdutos();
-            await CarregaCategorias();
         }
 
         private async Task CarregaCategorias()
         {
             var json = await _client.GetStringAsync(urlCategoria);
             listaCategorias = JsonConvert.DeserializeObject<List<Categoria>>(json);
-            PkrCategoria.ItemsSource = listaCategorias;
+            PkrCategoria.ItemsSource = listaCategorias.Where(l => l.Inativo == false).ToList();
         }
 
         private async Task CarregaListaProdutos()
@@ -452,6 +454,7 @@ namespace SistemaDoLeo.Paginas
             TxtPreco.Text = string.Empty;
             TxtCusto.Text = string.Empty;
             TxtUnidade.Text = string.Empty;
+            TxtEstoque.Text = (0).ToString();
             ChkInativo.IsChecked = false;
         }
 

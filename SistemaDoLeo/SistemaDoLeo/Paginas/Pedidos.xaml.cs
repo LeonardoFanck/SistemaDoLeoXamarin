@@ -66,14 +66,14 @@ namespace SistemaDoLeo.Paginas
 
             this.permissoes = permissoes;
 
+            RadioVenda.IsChecked = true;
+
             AbrirProdutos(false);
         }
 
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-
-            RadioVenda.IsChecked = true;
 
             await CarregaListaPedidos();
 
@@ -784,6 +784,9 @@ namespace SistemaDoLeo.Paginas
         private async void RadioCompra_CheckedChanged(object sender, CheckedChangedEventArgs e)
         {
             await ValidarOperacao();
+
+            clienteAtual = null;
+            TxtCliente.Text = string.Empty;
         }
 
         private async void SwDeleteProduto_Invoked(object sender, EventArgs e)

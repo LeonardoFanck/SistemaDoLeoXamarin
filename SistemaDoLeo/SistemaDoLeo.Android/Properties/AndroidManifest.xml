@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.companyname.sistemadoleo" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
-	<application android:label="SistemaDoLeo.Android" android:theme="@style/MainTheme" android:usesCleartextTraffic="true" android:networkSecurityConfig="@xml/network_security_config" android:icon="@mipmap/ic_launcher">
+	<application android:label="Sistema do Leo" android:theme="@style/MainTheme" android:usesCleartextTraffic="true" android:networkSecurityConfig="@xml/network_security_config" android:icon="@mipmap/ic_launcher">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="${applicationId}.provider" android:exported="false" android:grantUriPermissions="true">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths" />
 		</provider>
